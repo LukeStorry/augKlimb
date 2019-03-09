@@ -1,15 +1,19 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 public class ButtonHandler : MonoBehaviour {
-
-	// Moves to the 
+    
 	public void GoToScene (string sceneName) {
         SceneManager.LoadScene(sceneName);
     }
 
-    // Moves to the video scene
     public void OpenLink (string url) {
         Application.OpenURL(url);
+    }
+
+    public void OpenFolder(string folder)
+    {
+        Application.OpenURL("file:" + Path.Combine(Application.persistentDataPath, folder));
     }
 }

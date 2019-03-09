@@ -42,11 +42,14 @@ public class AccelerometerRecorder : MonoBehaviour
         {
             csvString += acc.ToString("#0.000") + ",";
         }
-        Debug.Log(csvString);
-
+        
+        string folderPath = Path.Combine(Application.persistentDataPath, "accelerometer");
+        if (!Directory.Exists(folderPath))
+        {
+            Directory.CreateDirectory(folderPath);
+        }
         string filename = "acc_" + DateTime.Now.ToString("yyMMdd-HHmmss") + ".txt";
-        string path = Path.Combine(Application.persistentDataPath, Path.Combine("accelerometer_readings", filename));
-        File.WriteAllText(path, csvString);
-        Debug.Log(path);
+        File.WriteAllText(Path.Combine(folderPath, filename), csvString);
+        Debug.Log(filename + " written to " + folderPath);
     }
 }
