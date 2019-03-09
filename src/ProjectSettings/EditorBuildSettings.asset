@@ -9,8 +9,11 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 3c1f02324abf2a3439670b7da2707112
   - enabled: 1
-    path: Assets/Scenes/Accelerometer.unity
-    guid: 7b84064373bf1c04fb818877e016344e
-  - enabled: 1
     path: Assets/Scenes/Video.unity
     guid: 9d1ffad9864321945822110bc84434e1
+  - enabled: 1
+    path: Assets/Scenes/AccRecord.unity
+    guid: 28cda180e5cbd834986f7851e0a06dd9
+  - enabled: 1
+    path: Assets/Scenes/ViewAccData.unity
+    guid: c8e3b343641a3484d9dea33d4bdce6a7

@@ -140,8 +140,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.103125, y: 0.11883333}
   m_AnchorMax: {x: 0.90300006, y: 0.42745835}
-  m_AnchoredPosition: {x: 5.6, y: 0.5}
-  m_SizeDelta: {x: -144.8, y: -174}
+  m_AnchoredPosition: {x: -0.000011444092, y: 0.5}
+  m_SizeDelta: {x: 0.000061035, y: -174}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &339628915
 MonoBehaviour:
@@ -172,7 +172,7 @@ MonoBehaviour:
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 0
+    m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: '-----'
@@ -242,7 +242,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &535766073
 GameObject:
@@ -278,8 +278,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.15171067, y: 0.38516572}
   m_AnchorMax: {x: 0.5, y: 0.6}
-  m_AnchoredPosition: {x: -40.225006, y: -0.099998474}
-  m_SizeDelta: {x: -80.4, y: -50.399994}
+  m_AnchoredPosition: {x: -20.1, y: -0.099998474}
+  m_SizeDelta: {x: -40.2, y: -50.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &535766075
 MonoBehaviour:
@@ -320,8 +320,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2118583900}
-        m_MethodName: StartTimer
+      - m_Target: {fileID: 694063722}
+        m_MethodName: StartRecord
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -398,10 +398,10 @@ RectTransform:
   m_Father: {fileID: 1987238687}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.06555918, y: 0.957}
-  m_AnchorMax: {x: 0.06555918, y: 0.957}
-  m_AnchoredPosition: {x: 85, y: -11}
-  m_SizeDelta: {x: 288.00034, y: 57.400024}
+  m_AnchorMin: {x: 0.019340253, y: 0.97900003}
+  m_AnchorMax: {x: 0.019340253, y: 0.97900003}
+  m_AnchoredPosition: {x: 60.64, y: -25.436}
+  m_SizeDelta: {x: 121.27, y: 50.872}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &577635201
 MonoBehaviour:
@@ -497,8 +497,9 @@ GameObject:
   m_Component:
   - component: {fileID: 694063721}
   - component: {fileID: 694063720}
+  - component: {fileID: 694063722}
   m_Layer: 0
-  m_Name: ButtonHandler
+  m_Name: Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -526,8 +527,20 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &694063722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 694063719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25d5f602597efe142a87c525d40455a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timerText: {fileID: 339628915}
 --- !u!1 &1022338814
 GameObject:
   m_ObjectHideFlags: 0
@@ -562,8 +575,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.38516572}
   m_AnchorMax: {x: 0.8512894, y: 0.6}
-  m_AnchoredPosition: {x: 40.5, y: -0.21500015}
-  m_SizeDelta: {x: -81, y: -50.070007}
+  m_AnchoredPosition: {x: 20.4, y: -0.21500015}
+  m_SizeDelta: {x: -40.8, y: -50.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1022338816
 MonoBehaviour:
@@ -604,8 +617,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2118583900}
-        m_MethodName: StopTimer
+      - m_Target: {fileID: 694063722}
+        m_MethodName: StopRecord
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -811,7 +824,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1987238683
 GameObject:
@@ -905,7 +918,7 @@ RectTransform:
   - {fileID: 1022338815}
   - {fileID: 339628914}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1076,9 +1089,8 @@ GameObject:
   - component: {fileID: 2118583897}
   - component: {fileID: 2118583899}
   - component: {fileID: 2118583898}
-  - component: {fileID: 2118583900}
   m_Layer: 5
-  m_Name: augKlimb
+  m_Name: Logo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1134,15 +1146,3 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2118583896}
---- !u!114 &2118583900
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2118583896}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25d5f602597efe142a87c525d40455a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  timerText: {fileID: 339628915}

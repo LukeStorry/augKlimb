@@ -1,34 +1,52 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AccelerometerRecorder : MonoBehaviour {
-
+public class AccelerometerRecorder : MonoBehaviour
+{
     public Text timerText;
-    private float startTime = 0;
+    private float startTime = -1;
+    private List<float> accs;
 
-    // Use this for initialization
-    void Start () {
+    void Start()
+    {
         timerText.text = "ready";
     }
-	
-	// Update is called once per frame
-	void Update () {
-        if (startTime != 0)
+
+    void Update()
+    {
+        if (startTime != -1)
         {
-            timerText.text = (Time.time-startTime).ToString("#.00");
+            accs.Add(new Vector3(Input.acceleration.x, Input.acceleration.y, Input.acceleration.z).magnitude);
+            timerText.text = (Time.time - startTime).ToString("#0.00");
         }
     }
 
-    public void StartTimer()
+
+    public void StartRecord()
     {
+        Debug.Log("Started");
         startTime = Time.time;
+        accs = new List<float>();
     }
 
-    public void StopTimer()
+    public void StopRecord()
     {
-        startTime = 0;
-    }
+        Debug.Log("Stopped");
+        startTime = -1;
 
+        string csvString = "";
+        foreach(float acc in accs)
+        {
+            csvString += acc.ToString("#0.000") + ",";
+        }
+        Debug.Log(csvString);
+
+        string filename = "acc_" + DateTime.Now.ToString("yyMMdd-HHmmss") + ".txt";
+        string path = Path.Combine(Application.persistentDataPath, Path.Combine("accelerometer_readings", filename));
+        File.WriteAllText(path, csvString);
+        Debug.Log(path);
+    }
 }
