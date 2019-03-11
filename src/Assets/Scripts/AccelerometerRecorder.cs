@@ -9,6 +9,7 @@ public class AccelerometerRecorder : MonoBehaviour
     public Text timerText;
     private float startTime = -1;
     private List<float> accs;
+    private bool running = false;
 
     void Start()
     {
@@ -27,13 +28,16 @@ public class AccelerometerRecorder : MonoBehaviour
 
     public void StartRecord()
     {
+        if (running) return;
         Debug.Log("Started");
         startTime = Time.time;
         accs = new List<float>();
+        running = true;
     }
 
     public void StopRecord()
     {
+        if (!running) return;
         Debug.Log("Stopped");
         startTime = -1;
 
@@ -51,5 +55,7 @@ public class AccelerometerRecorder : MonoBehaviour
         string filename = "acc_" + DateTime.Now.ToString("yyMMdd-HHmmss") + ".txt";
         File.WriteAllText(Path.Combine(folderPath, filename), csvString);
         Debug.Log(filename + " written to " + folderPath);
+
+        running = false;
     }
 }
