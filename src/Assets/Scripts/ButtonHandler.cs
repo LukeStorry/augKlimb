@@ -14,6 +14,6 @@ public class ButtonHandler : MonoBehaviour {
 
     public void OpenFolder(string folder)
     {
-        Application.OpenURL("file:" + Path.Combine(Application.persistentDataPath, folder));
+        Application.OpenURL(Path.Combine(Application.persistentDataPath, folder));
     }
 }
