@@ -10,6 +10,8 @@ public class DataViewer : MonoBehaviour
 {
     public GameObject scrollContent;
     public GameObject dataItem;
+    public GameObject dot;
+
     private int dataItemHeight = 270;
 
     void Start() {
@@ -24,14 +26,14 @@ public class DataViewer : MonoBehaviour
 
     void addToScroll(FileInfo file)
     {
-        string data = File.ReadAllText(file.FullName);
-        string[] splitData = data.Split(new string[] { ",\ntimes,accelerations" }, System.StringSplitOptions.None);
+        string fileContents = File.ReadAllText(file.FullName);
+        string[] splitData = fileContents.Split(new string[] { ",\ntimes,accelerations\n" }, System.StringSplitOptions.None);
 
         GameObject item = Instantiate(dataItem, scrollContent.transform);
 
         item.transform.Find("Title").GetComponent<Text>().text = parseFileName(file.FullName);
 
-        //TODO item.transform.Find("image") = CreateGraph(splitData[1]);
+        CreateGraph(item.transform.Find("GraphContainer").gameObject, splitData[1]);
 
         item.transform.Find("Details").GetComponent<Text>().text = splitData[0];
 
@@ -46,9 +48,31 @@ public class DataViewer : MonoBehaviour
     }
 
 
-    GameObject CreateGraph(string data)
+    private void CreateGraph(GameObject graphContainer, string data)
     {
-        return null;
+        foreach (Vector2 dataPoint in parseData(data))
+        {
+            GameObject point = Instantiate(dot, graphContainer.transform);
+            point.GetComponent<RectTransform>().localPosition = dataPoint;
+        }
+
+      
     }
 
+    private static List<Vector2> parseData(string csv)
+    {
+        Debug.Log(csv);
+        List<Vector2> parsedData = new List<Vector2>();
+        foreach(string line in csv.Split('\n'))
+        {
+            if (line == "") continue;
+            Debug.Log(line);
+            string[] rowData = line.Split(',');
+            Debug.Log(rowData[0]);
+            parsedData.Add(new Vector2(float.Parse(rowData[0]), float.Parse(rowData[1])));
+        }
+        return parsedData;
+    }
+
+    //private void CreateCircle(Vector2 position, Game)
 }
