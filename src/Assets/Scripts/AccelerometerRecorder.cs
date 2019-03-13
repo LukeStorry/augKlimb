@@ -30,10 +30,14 @@ public class AccelerometerRecorder : MonoBehaviour
         {
             accs.Add(new Vector3(Input.acceleration.x, Input.acceleration.y, Input.acceleration.z).magnitude);
             times.Add(DateTime.Now.Ticks);
-            timerText.text = "Time: " + ((DateTime.Now.Ticks - startTime) / 10000000.0).ToString("#0.00");
+            timerText.text = TimerString();
         }
     }
 
+    private string TimerString()
+    {
+        return ((DateTime.Now.Ticks - startTime) / 10000000.0).ToString("#0.00");
+    }
 
     public void StartRecord()
     {
@@ -54,18 +58,20 @@ public class AccelerometerRecorder : MonoBehaviour
         running = false;
         Debug.Log("Stopped");
 
-        timerText.text += "\nTotal Deviance from Mean: " + CalcSmoothness(accs).ToString("#0.00");
+        string infoText = "Time: " + TimerString() + "\nTotal Deviance from Mean: " + CalcSmoothness(accs).ToString("#0.00");
+        timerText.text = infoText;
 
-        SaveLists();
+        SaveLists(infoText.Replace("\n", ",  "));
 
         startButton.GetComponent<Image>().color = buttonReadyColour;
         stopButton.GetComponent<Image>().color = buttonNotReadyColour;
 
     }
 
-    private void SaveLists()
+    // Saves the accs and times lists as a timestamped csv file, with the info tex as the first line
+    private void SaveLists(string infoText)
     {
-        string csvString = "times,accelerations\n";
+        string csvString = infoText + ",\ntimes,accelerations\n";
         for (int i = 0; i < times.Count; i++)
         {
             csvString += times[i].ToString() + "," + accs[i].ToString("#0.000") + "\n";
