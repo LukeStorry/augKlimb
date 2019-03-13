@@ -11,8 +11,10 @@ public class DataViewer : MonoBehaviour
     public GameObject scrollContent;
     public GameObject dataItem;
     public GameObject dot;
+    public GameObject lineObj;
 
     private int dataItemHeight = 270;
+    private int lineWidth = 5;
 
     struct DataPoint
     {
@@ -25,7 +27,14 @@ public class DataViewer : MonoBehaviour
             this.time = long.Parse(splitString[0]);
             this.acc = float.Parse(splitString[1]);
         }
+
+        public DataPoint(long time, float acc)
+        {
+            this.time = time;
+            this.acc = acc;
+        }
     }
+    
 
     void Start() {
         scrollContent.transform.Find("DataItem").gameObject.SetActive(false);
@@ -64,14 +73,14 @@ public class DataViewer : MonoBehaviour
 
     private void CreateGraph(GameObject graphContainer, string dataString)
     {
-        float graphWidth = -10 + graphContainer.GetComponent<RectTransform>().rect.width;
-        float graphHeight = -10 + graphContainer.GetComponent<RectTransform>().rect.height;
-
+        // Parse incoming Dataset
         List<DataPoint> data = parseData(dataString);
-
-        // Find Graph edge values for mappings
-        long maxTime = long.MinValue, minTime = long.MaxValue;
-        float maxAcc = float.MinValue, minAcc = float.MaxValue;
+     
+        // Find dataset max & min
+        long maxTime = long.MinValue;
+        long minTime = long.MaxValue;
+        float maxAcc = float.MinValue;
+        float minAcc = float.MaxValue;
         foreach (DataPoint dataPoint in data)
         {
             maxTime = (dataPoint.time > maxTime) ? dataPoint.time : maxTime;
@@ -79,15 +88,43 @@ public class DataViewer : MonoBehaviour
             maxAcc = (dataPoint.acc > maxAcc) ? dataPoint.acc : maxAcc;
             minAcc = (dataPoint.acc < minAcc) ? dataPoint.acc : minAcc;
         }
+        // Find size of graphContainer (with 10pt padding)
+        float graphWidth = -10 + graphContainer.GetComponent<RectTransform>().rect.width;
+        float graphHeight = -10 + graphContainer.GetComponent<RectTransform>().rect.height;
+
         // Calculate mapping values (adding slight offsets to prevent zero edge-case)
         float xMultiplier = graphWidth / (maxTime - minTime + 0.0001f);
         float yMultiplier = graphHeight / (maxAcc - minAcc + 0.0001f);
+
+        // Loop through datapoints adding a line to the previous point, if exists
+        Vector2 previous = Vector2.negativeInfinity;
         foreach (DataPoint dataPoint in data)
         {
-            GameObject point = Instantiate(dot, graphContainer.transform);
-            float x = (dataPoint.time - minTime) * xMultiplier - graphWidth/2;
+            float x = (dataPoint.time - minTime) * xMultiplier - graphWidth / 2;
             float y = (dataPoint.acc - minAcc) * yMultiplier - graphHeight / 2;
-            point.GetComponent<RectTransform>().localPosition = new Vector2(x, y);
+            Vector2 coord = new Vector2(x, y);
+
+            if (previous != Vector2.negativeInfinity)
+            {
+                GameObject point = Instantiate(dot, graphContainer.transform);
+                point.GetComponent<RectTransform>().localPosition = coord;
+
+
+                GameObject line = Instantiate(lineObj, graphContainer.transform);
+                line.GetComponent<RectTransform>().localPosition = coord;
+
+                float length = 2 + Vector2.Distance(coord, previous);
+                line.GetComponent<RectTransform>().sizeDelta = new Vector2(length, lineWidth);
+
+                float angle = Mathf.Atan2((previous - coord).y, (previous - coord).x) * Mathf.Rad2Deg;
+                Debug.Log(previous);
+                Debug.Log(coord);
+                Debug.Log(previous - coord);
+                Debug.Log(angle);
+                line.GetComponent<RectTransform>().localEulerAngles = new Vector3(0, 0, angle);
+            }
+            previous = coord;
+
         }
 
       
