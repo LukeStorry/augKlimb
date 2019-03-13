@@ -14,10 +14,24 @@ public class DataViewer : MonoBehaviour
 
     private int dataItemHeight = 270;
 
+    struct DataPoint
+    {
+        public long time; // DateTime Ticks
+        public float acc; // Accelerometer data
+
+        public DataPoint(string dataString)
+        {
+            string[] splitString = dataString.Split(',');
+            this.time = long.Parse(splitString[0]);
+            this.acc = float.Parse(splitString[1]);
+        }
+    }
+
     void Start() {
         scrollContent.transform.Find("DataItem").gameObject.SetActive(false);
 
         FileInfo[] files = new DirectoryInfo(Path.Combine(Application.persistentDataPath, "accelerometer")).GetFiles("*.csv");
+        Array.Reverse(files);
         foreach (FileInfo file in files) {
             addToScroll(file);
         }
@@ -48,31 +62,47 @@ public class DataViewer : MonoBehaviour
     }
 
 
-    private void CreateGraph(GameObject graphContainer, string data)
+    private void CreateGraph(GameObject graphContainer, string dataString)
     {
-        foreach (Vector2 dataPoint in parseData(data))
+        float graphWidth = -10 + graphContainer.GetComponent<RectTransform>().rect.width;
+        float graphHeight = -10 + graphContainer.GetComponent<RectTransform>().rect.height;
+
+        List<DataPoint> data = parseData(dataString);
+
+        // Find Graph edge values for mappings
+        long maxTime = long.MinValue, minTime = long.MaxValue;
+        float maxAcc = float.MinValue, minAcc = float.MaxValue;
+        foreach (DataPoint dataPoint in data)
+        {
+            maxTime = (dataPoint.time > maxTime) ? dataPoint.time : maxTime;
+            minTime = (dataPoint.time < minTime) ? dataPoint.time : minTime;
+            maxAcc = (dataPoint.acc > maxAcc) ? dataPoint.acc : maxAcc;
+            minAcc = (dataPoint.acc < minAcc) ? dataPoint.acc : minAcc;
+        }
+        // Calculate mapping values (adding slight offsets to prevent zero edge-case)
+        float xMultiplier = graphWidth / (maxTime - minTime + 0.0001f);
+        float yMultiplier = graphHeight / (maxAcc - minAcc + 0.0001f);
+        foreach (DataPoint dataPoint in data)
         {
             GameObject point = Instantiate(dot, graphContainer.transform);
-            point.GetComponent<RectTransform>().localPosition = dataPoint;
+            float x = (dataPoint.time - minTime) * xMultiplier - graphWidth/2;
+            float y = (dataPoint.acc - minAcc) * yMultiplier - graphHeight / 2;
+            point.GetComponent<RectTransform>().localPosition = new Vector2(x, y);
         }
 
       
     }
 
-    private static List<Vector2> parseData(string csv)
+    private static List<DataPoint> parseData(string csv)
     {
-        Debug.Log(csv);
-        List<Vector2> parsedData = new List<Vector2>();
+        List<DataPoint> parsedData = new List<DataPoint>();
         foreach(string line in csv.Split('\n'))
         {
             if (line == "") continue;
-            Debug.Log(line);
-            string[] rowData = line.Split(',');
-            Debug.Log(rowData[0]);
-            parsedData.Add(new Vector2(float.Parse(rowData[0]), float.Parse(rowData[1])));
+            parsedData.Add(new DataPoint(line));
         }
         return parsedData;
     }
+    
 
-    //private void CreateCircle(Vector2 position, Game)
 }

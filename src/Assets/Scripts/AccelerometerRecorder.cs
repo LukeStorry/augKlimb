@@ -10,8 +10,8 @@ public class AccelerometerRecorder : MonoBehaviour
     public Button startButton, stopButton;
 
     private Int64 startTime;
-    private List<Int64> times;
-    private List<float> accs;
+    private List<long> times; // datetime.Ticks (10000ths milliseeconds since millenium)
+    private List<float> accs; // raw accelerometer data
     private bool running = false;
     private Color buttonReadyColour, buttonNotReadyColour;
 
