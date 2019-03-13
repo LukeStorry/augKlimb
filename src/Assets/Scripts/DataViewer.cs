@@ -80,7 +80,7 @@ public class DataViewer : MonoBehaviour
         long maxTime = long.MinValue;
         long minTime = long.MaxValue;
         float maxAcc = float.MinValue;
-        float minAcc = float.MaxValue;
+        float minAcc = 0;
         foreach (DataPoint dataPoint in data)
         {
             maxTime = (dataPoint.time > maxTime) ? dataPoint.time : maxTime;
@@ -97,14 +97,14 @@ public class DataViewer : MonoBehaviour
         float yMultiplier = graphHeight / (maxAcc - minAcc + 0.0001f);
 
         // Loop through datapoints adding a line to the previous point, if exists
-        Vector2 previous = Vector2.negativeInfinity;
+        Vector2 previous = Vector2.zero;
         foreach (DataPoint dataPoint in data)
         {
             float x = (dataPoint.time - minTime) * xMultiplier - graphWidth / 2;
             float y = (dataPoint.acc - minAcc) * yMultiplier - graphHeight / 2;
             Vector2 coord = new Vector2(x, y);
 
-            if (previous != Vector2.negativeInfinity)
+            if (previous != Vector2.zero)
             {
                 //GameObject point = Instantiate(dot, graphContainer.transform);
                 //point.GetComponent<RectTransform>().localPosition = coord;
@@ -116,13 +116,18 @@ public class DataViewer : MonoBehaviour
                 line.GetComponent<RectTransform>().sizeDelta = new Vector2(2 + length, lineWidth);
 
                 float angle = Mathf.Atan2((previous - coord).y, (previous - coord).x) * Mathf.Rad2Deg;
-                line.GetComponent<RectTransform>().localEulerAngles = new Vector3(0, 0, angle);
+                Debug.Log(angle);
+                line.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0, 0, angle);
             }
-            previous = coord;
 
+            previous = coord;
         }
 
-      
+        // Add Y axis labels
+        graphContainer.transform.Find("Min").GetComponent<Text>().text = minAcc.ToString("#0.00");
+        graphContainer.transform.Find("Max").GetComponent<Text>().text = maxAcc.ToString("#0.00");
+
+
     }
 
     private static List<DataPoint> parseData(string csv)

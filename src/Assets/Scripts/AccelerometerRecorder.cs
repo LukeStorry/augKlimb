@@ -23,7 +23,7 @@ public class AccelerometerRecorder : MonoBehaviour
         buttonReadyColour = startButton.GetComponent<Image>().color;
         buttonNotReadyColour = stopButton.GetComponent<Image>().color;
     }
-
+    
     void FixedUpdate()
     {
         if (running)
@@ -36,7 +36,7 @@ public class AccelerometerRecorder : MonoBehaviour
 
     private string TimerString()
     {
-        return ((DateTime.Now.Ticks - startTime) / 10000000.0).ToString("#0.00");
+        return ((DateTime.Now.Ticks - startTime) / 10000000.0).ToString("#0.0");
     }
 
     public void StartRecord()
@@ -58,7 +58,7 @@ public class AccelerometerRecorder : MonoBehaviour
         running = false;
         Debug.Log("Stopped");
 
-        string infoText = "Time: " + TimerString() + "\nSmooth Rating: " + CalcSmoothness(accs).ToString("#0.00");
+        string infoText = "Time: " + TimerString() + "\nSmooth Rating: " + CalcSmoothness(accs).ToString("#0.0");
         timerText.text = infoText;
 
         SaveLists(infoText.Replace("\n", ",  "));
