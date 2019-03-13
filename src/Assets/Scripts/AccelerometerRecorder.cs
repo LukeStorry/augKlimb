@@ -58,7 +58,7 @@ public class AccelerometerRecorder : MonoBehaviour
         running = false;
         Debug.Log("Stopped");
 
-        string infoText = "Time: " + TimerString() + "\nTotal Deviance from Mean: " + CalcSmoothness(accs).ToString("#0.00");
+        string infoText = "Time: " + TimerString() + "\nSmooth Rating: " + CalcSmoothness(accs).ToString("#0.00");
         timerText.text = infoText;
 
         SaveLists(infoText.Replace("\n", ",  "));

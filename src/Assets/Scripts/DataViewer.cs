@@ -10,7 +10,7 @@ public class DataViewer : MonoBehaviour
 {
     public GameObject scrollContent;
     public GameObject dataItem;
-    public int dataItemHeight = 200;
+    private int dataItemHeight = 270;
 
     void Start() {
         scrollContent.transform.Find("DataItem").gameObject.SetActive(false);
@@ -25,7 +25,7 @@ public class DataViewer : MonoBehaviour
     void addToScroll(FileInfo file)
     {
         string data = File.ReadAllText(file.FullName);
-        string[] splitData = data.Split(new string[] { "times,accelerations" }, System.StringSplitOptions.None);
+        string[] splitData = data.Split(new string[] { ",\ntimes,accelerations" }, System.StringSplitOptions.None);
 
         GameObject item = Instantiate(dataItem, scrollContent.transform);
 
