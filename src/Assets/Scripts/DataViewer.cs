@@ -106,21 +106,16 @@ public class DataViewer : MonoBehaviour
 
             if (previous != Vector2.negativeInfinity)
             {
-                GameObject point = Instantiate(dot, graphContainer.transform);
-                point.GetComponent<RectTransform>().localPosition = coord;
-
+                //GameObject point = Instantiate(dot, graphContainer.transform);
+                //point.GetComponent<RectTransform>().localPosition = coord;
 
                 GameObject line = Instantiate(lineObj, graphContainer.transform);
                 line.GetComponent<RectTransform>().localPosition = coord;
 
-                float length = 2 + Vector2.Distance(coord, previous);
-                line.GetComponent<RectTransform>().sizeDelta = new Vector2(length, lineWidth);
+                float length = Vector2.Distance(coord, previous);
+                line.GetComponent<RectTransform>().sizeDelta = new Vector2(2 + length, lineWidth);
 
                 float angle = Mathf.Atan2((previous - coord).y, (previous - coord).x) * Mathf.Rad2Deg;
-                Debug.Log(previous);
-                Debug.Log(coord);
-                Debug.Log(previous - coord);
-                Debug.Log(angle);
                 line.GetComponent<RectTransform>().localEulerAngles = new Vector3(0, 0, angle);
             }
             previous = coord;
