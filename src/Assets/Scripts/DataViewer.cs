@@ -4,8 +4,6 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-
-
 public class DataViewer : MonoBehaviour
 {
     public GameObject scrollContent;
@@ -16,66 +14,32 @@ public class DataViewer : MonoBehaviour
     private int dataItemHeight = 270;
     private int lineWidth = 5;
 
-    struct DataPoint
+
+
+    void Start()
     {
-        public long time; // DateTime Ticks
-        public float acc; // Accelerometer data
-
-        public DataPoint(string dataString)
-        {
-            string[] splitString = dataString.Split(',');
-            this.time = long.Parse(splitString[0]);
-            this.acc = float.Parse(splitString[1]);
-        }
-
-        public DataPoint(long time, float acc)
-        {
-            this.time = time;
-            this.acc = acc;
-        }
-    }
-    
-
-    void Start() {
         scrollContent.transform.Find("DataItem").gameObject.SetActive(false);
 
-        FileInfo[] files = new DirectoryInfo(Path.Combine(Application.persistentDataPath, "accelerometer")).GetFiles("*.csv");
-        Array.Reverse(files);
-        foreach (FileInfo file in files) {
-            addToScroll(file);
+        List<ClimbData> climbs = FileHandler.LoadClimbs();
+        foreach (ClimbData climb in climbs)
+        {
+            AddToScroll(climb);
         }
-        scrollContent.GetComponent<RectTransform>().sizeDelta = new Vector2(0, dataItemHeight * files.Length);
+        scrollContent.GetComponent<RectTransform>().sizeDelta = new Vector2(0, dataItemHeight * climbs.Count);
     }
 
-    void addToScroll(FileInfo file)
+    void AddToScroll(ClimbData climb)
     {
-        string fileContents = File.ReadAllText(file.FullName);
-        string[] splitData = fileContents.Split(new string[] { ",\ntimes,accelerations\n" }, System.StringSplitOptions.None);
 
         GameObject item = Instantiate(dataItem, scrollContent.transform);
 
-        item.transform.Find("Title").GetComponent<Text>().text = parseFileName(file.FullName);
-
-        CreateGraph(item.transform.Find("GraphContainer").gameObject, splitData[1]);
-
-        item.transform.Find("Details").GetComponent<Text>().text = splitData[0];
-
+        item.transform.Find("Title").GetComponent<Text>().text = climb.date.ToString("F", null);
+        item.transform.Find("Details").GetComponent<Text>().text = climb.InfoText.Replace("\n", ", ");
+        DrawGraph(item.transform.Find("GraphContainer").gameObject, climb.accelerometer);
     }
 
-    // Converts timestamped filename to pretty datetime string format
-    string parseFileName(string filename)
+    private void DrawGraph(GameObject graphContainer, List<DataPoint> data)
     {
-        string dateString = filename.Substring(filename.Length - 17, 13);
-        DateTime dt = DateTime.ParseExact(dateString, "yyMMdd-HHmmss", null);
-        return dt.ToString("F", null);
-    }
-
-
-    private void CreateGraph(GameObject graphContainer, string dataString)
-    {
-        // Parse incoming Dataset
-        List<DataPoint> data = parseData(dataString);
-     
         // Find dataset max & min
         long maxTime = long.MinValue;
         long minTime = long.MaxValue;
@@ -116,7 +80,6 @@ public class DataViewer : MonoBehaviour
                 line.GetComponent<RectTransform>().sizeDelta = new Vector2(2 + length, lineWidth);
 
                 float angle = Mathf.Atan2((previous - coord).y, (previous - coord).x) * Mathf.Rad2Deg;
-                Debug.Log(angle);
                 line.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0, 0, angle);
             }
 
@@ -127,19 +90,7 @@ public class DataViewer : MonoBehaviour
         graphContainer.transform.Find("Min").GetComponent<Text>().text = minAcc.ToString("#0.00");
         graphContainer.transform.Find("Max").GetComponent<Text>().text = maxAcc.ToString("#0.00");
 
-
+        Debug.Log("Graph Drawn");
     }
-
-    private static List<DataPoint> parseData(string csv)
-    {
-        List<DataPoint> parsedData = new List<DataPoint>();
-        foreach(string line in csv.Split('\n'))
-        {
-            if (line == "") continue;
-            parsedData.Add(new DataPoint(line));
-        }
-        return parsedData;
-    }
-    
 
 }

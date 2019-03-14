@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,8 +9,7 @@ public class AccelerometerRecorder : MonoBehaviour
     public Button startButton, stopButton;
 
     private Int64 startTime;
-    private List<long> times; // datetime.Ticks (10000ths milliseeconds since millenium)
-    private List<float> accs; // raw accelerometer data
+    private List<DataPoint> data;
     private bool running = false;
     private Color buttonReadyColour, buttonNotReadyColour;
 
@@ -23,21 +21,18 @@ public class AccelerometerRecorder : MonoBehaviour
         buttonReadyColour = startButton.GetComponent<Image>().color;
         buttonNotReadyColour = stopButton.GetComponent<Image>().color;
     }
-    
+
     void FixedUpdate()
     {
         if (running)
         {
-            accs.Add(new Vector3(Input.acceleration.x, Input.acceleration.y, Input.acceleration.z).magnitude);
-            times.Add(DateTime.Now.Ticks);
-            timerText.text = TimerString();
+            long time = DateTime.Now.Ticks;
+            float acc = new Vector3(Input.acceleration.x, Input.acceleration.y, Input.acceleration.z).magnitude;
+            data.Add(new DataPoint(time, acc));
+            timerText.text = Timer().ToString("#0.0");
         }
     }
 
-    private string TimerString()
-    {
-        return ((DateTime.Now.Ticks - startTime) / 10000000.0).ToString("#0.0");
-    }
 
     public void StartRecord()
     {
@@ -46,8 +41,7 @@ public class AccelerometerRecorder : MonoBehaviour
         Debug.Log("Started");
 
         startTime = DateTime.Now.Ticks;
-        times = new List<Int64>();
-        accs = new List<float>();
+        data = new List<DataPoint>();
         startButton.GetComponent<Image>().color = buttonNotReadyColour;
         stopButton.GetComponent<Image>().color = buttonReadyColour;
     }
@@ -58,52 +52,20 @@ public class AccelerometerRecorder : MonoBehaviour
         running = false;
         Debug.Log("Stopped");
 
-        string infoText = "Time: " + TimerString() + "\nSmooth Rating: " + CalcSmoothness(accs).ToString("#0.0");
-        timerText.text = infoText;
+        ClimbData climb = new ClimbData(data, Timer());
+        timerText.text = climb.InfoText;
 
-        SaveLists(infoText.Replace("\n", ",  "));
+        FileHandler.SaveClimb(climb);
 
         startButton.GetComponent<Image>().color = buttonReadyColour;
         stopButton.GetComponent<Image>().color = buttonNotReadyColour;
 
     }
 
-    // Saves the accs and times lists as a timestamped csv file, with the info tex as the first line
-    private void SaveLists(string infoText)
+    private float Timer()
     {
-        string csvString = infoText + ",\ntimes,accelerations\n";
-        for (int i = 0; i < times.Count; i++)
-        {
-            csvString += times[i].ToString() + "," + accs[i].ToString("#0.000") + "\n";
-        }
-
-        string folderPath = Path.Combine(Application.persistentDataPath, "accelerometer");
-        if (!Directory.Exists(folderPath))
-        {
-            Directory.CreateDirectory(folderPath);
-        }
-        string filename = "acc_" + DateTime.Now.ToString("yyMMdd-HHmmss") + ".csv";
-        File.WriteAllText(Path.Combine(folderPath, filename), csvString);
-        Debug.Log(filename + " written to " + folderPath);
+        return (DateTime.Now.Ticks - startTime) / 10000000.0f;
     }
 
 
-    public static float CalcSmoothness(List<float> accs)
-    {
-        float avg = 0;
-        int count = 0;
-        foreach (float n in accs)
-        {
-            avg += n;
-            count += 1;
-        }
-        avg /= count;
-
-        float totalSquaredDiff = 0;
-        foreach (float n in accs)
-        {
-            totalSquaredDiff += Mathf.Pow(n - avg, 2);
-        }
-        return totalSquaredDiff;
-    }
 }
