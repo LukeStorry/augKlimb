@@ -12,8 +12,7 @@ public class DataScroller : MonoBehaviour
     {
         scrollContent.transform.Find("DataItem").gameObject.SetActive(false);
 
-        List<ClimbData> climbs = FileHandler.LoadClimbs();
-        foreach (ClimbData climb in climbs) AddToScroll(climb);
+        foreach (ClimbData climb in PersistentInfo.climbs) AddToScroll(climb);
     }
 
     void AddToScroll(ClimbData climb)
@@ -28,7 +27,7 @@ public class DataScroller : MonoBehaviour
 
     void SelectClimb(ClimbData climb)
     {
-        SceneInfo.currentClimb = climb;
+        PersistentInfo.currentClimb = climb;
         SceneManager.LoadScene("ViewClimb");
     }
 }

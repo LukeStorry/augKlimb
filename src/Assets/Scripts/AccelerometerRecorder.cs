@@ -55,6 +55,7 @@ public class AccelerometerRecorder : MonoBehaviour
         ClimbData climb = new ClimbData(data);
         timerText.text = climb.InfoText;
 
+        PersistentInfo.climbs.Insert(0, climb);
         FileHandler.SaveClimb(climb);
 
         startButton.GetComponent<Image>().color = buttonReadyColour;

@@ -7,7 +7,7 @@ public class ClimbViewer : MonoBehaviour
     public GameObject scrollContent;
     void Start()
     {
-        ClimbData climb = SceneInfo.currentClimb;
+        ClimbData climb = PersistentInfo.currentClimb;
         gameObject.transform.Find("Title").GetComponent<Text>().text = climb.Date.ToString("F", null);
         gameObject.transform.Find("Details").GetComponent<Text>().text = climb.InfoText.Replace("\n", ", ");
 
