@@ -596,12 +596,13 @@ PlayerSettings:
     daydream:
       daydreamIconForeground: {fileID: 0}
       daydreamIconBackground: {fileID: 0}
-  cloudServicesEnabled: {}
+  cloudServicesEnabled:
+    UNet: 1
   facebookSdkVersion: 7.9.4
   apiCompatibilityLevel: 2
-  cloudProjectId: 703615f3-ab5c-42f7-9707-9617e4c40c57
+  cloudProjectId: 4ebc43ee-7f60-4a74-a649-d03edd657d91
   projectName: augKlimb
-  organizationId: unity_ctq6cr9l2kwxaw
+  organizationId: lukestorry
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0
