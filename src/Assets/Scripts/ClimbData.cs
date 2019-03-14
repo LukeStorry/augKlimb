@@ -3,35 +3,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public class ClimbData
 {
-    public DateTime date;
+    public float smoothness;
+    public List<DataPoint> accelerometer;
+    public float timeTaken
+    {
+        get { return (accelerometer[accelerometer.Count - 1].time - accelerometer[0].time) / 10000000.0f; }
+    }
+
+    public DateTime date
+    {
+        get { return new DateTime(accelerometer[0].time); }
+    }
     public string InfoText
     {
         get { return "Time: " + timeTaken.ToString("#0.0") + "\n Smoothness: " + smoothness.ToString("#0.0"); }
     }
-    public List<DataPoint> accelerometer;
-    public float timeTaken;
-    public float smoothness;
 
 
-    public ClimbData(List<DataPoint> accelerometer, float timeTaken)
+    public ClimbData(List<DataPoint> accelerometer)
     {
-        this.date = new DateTime(accelerometer[0].time);
         this.accelerometer = accelerometer;
-        this.timeTaken = timeTaken;
         this.smoothness = CalcSmoothness(accelerometer);
         Debug.Log("ClimbData Created");
     }
 
-    public ClimbData(List<DataPoint> accelerometer, float timeTaken, float smoothness)
-    {
-        this.date = new DateTime(accelerometer[0].time);
-        this.accelerometer = accelerometer;
-        this.timeTaken = timeTaken;
-        this.smoothness = smoothness;
-        Debug.Log("ClimbData Created");
-    }
 
     //TODO add "remove from XX time", and update timeTaken & smoothness in there too.
 
@@ -44,7 +42,6 @@ public class ClimbData
             avg += n.acc;
             count += 1;
         }
-        Debug.Log(avg);
         avg /= count;
 
         float totalSquaredDiff = 0;
@@ -57,7 +54,7 @@ public class ClimbData
     }
 }
 
-
+[Serializable]
 public struct DataPoint
 {
     public long time; // DateTime Ticks

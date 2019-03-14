@@ -52,7 +52,7 @@ public class AccelerometerRecorder : MonoBehaviour
         running = false;
         Debug.Log("Stopped");
 
-        ClimbData climb = new ClimbData(data, Timer());
+        ClimbData climb = new ClimbData(data);
         timerText.text = climb.InfoText;
 
         FileHandler.SaveClimb(climb);
