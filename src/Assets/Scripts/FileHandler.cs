@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System;
@@ -15,7 +14,7 @@ public class FileHandler
     {
         if (!Directory.Exists(climbsFolder)) Directory.CreateDirectory(climbsFolder);
 
-        string filename = "climb_" + climb.date.ToString(dateFormat) + ".json";
+        string filename = "climb_" + climb.Date.ToString(dateFormat) + ".json";
         string jsonString = JsonUtility.ToJson(climb);
 
         File.WriteAllText(Path.Combine(climbsFolder, filename), jsonString);

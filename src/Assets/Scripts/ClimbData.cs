@@ -1,25 +1,24 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
 public class ClimbData
 {
-    public float smoothness;
+    public float smoothness = 0;
     public List<DataPoint> accelerometer;
-    public float timeTaken
+    public float TimeTaken
     {
         get { return (accelerometer[accelerometer.Count - 1].time - accelerometer[0].time) / 10000000.0f; }
     }
 
-    public DateTime date
+    public DateTime Date
     {
         get { return new DateTime(accelerometer[0].time); }
     }
     public string InfoText
     {
-        get { return "Time: " + timeTaken.ToString("#0.0") + "\n Smoothness: " + smoothness.ToString("#0.0"); }
+        get { return "Time: " + TimeTaken.ToString("#0.0") + "\n Smoothness: " + smoothness.ToString("#0.0"); }
     }
 
 

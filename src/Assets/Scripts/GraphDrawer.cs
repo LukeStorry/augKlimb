@@ -1,45 +1,18 @@
 ﻿using System.Collections.Generic;
-using System.IO;
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DataViewer : MonoBehaviour
+public static class GraphDrawer
 {
-    public GameObject scrollContent;
-    public GameObject dataItem;
-    public GameObject dot;
-    public GameObject lineObj;
+    private static GameObject dotObj;
+    private static GameObject lineObj;
 
-    private int dataItemHeight = 270;
-    private int lineWidth = 5;
-
-
-
-    void Start()
+    // Draws a graph of the given data, within the bounds of a given graphContainer's RectTransform
+    public static void Draw(GameObject graphContainer, List<DataPoint> data, float lineWidth = 5, bool includeDots = false)
     {
-        scrollContent.transform.Find("DataItem").gameObject.SetActive(false);
+        dotObj = Resources.Load("Dot") as GameObject;
+        lineObj = Resources.Load("Line") as GameObject;
 
-        List<ClimbData> climbs = FileHandler.LoadClimbs();
-        foreach (ClimbData climb in climbs)
-        {
-            AddToScroll(climb);
-        }
-        scrollContent.GetComponent<RectTransform>().sizeDelta = new Vector2(0, dataItemHeight * climbs.Count);
-    }
-
-    void AddToScroll(ClimbData climb)
-    {
-
-        GameObject item = Instantiate(dataItem, scrollContent.transform);
-
-        item.transform.Find("Title").GetComponent<Text>().text = climb.date.ToString("F", null);
-        item.transform.Find("Details").GetComponent<Text>().text = climb.InfoText.Replace("\n", ", ");
-        DrawGraph(item.transform.Find("GraphContainer").gameObject, climb.accelerometer);
-    }
-
-    private void DrawGraph(GameObject graphContainer, List<DataPoint> data)
-    {
         // Find dataset max & min
         long maxTime = long.MinValue;
         long minTime = long.MaxValue;
@@ -70,10 +43,13 @@ public class DataViewer : MonoBehaviour
 
             if (previous != Vector2.zero)
             {
-                //GameObject point = Instantiate(dot, graphContainer.transform);
-                //point.GetComponent<RectTransform>().localPosition = coord;
+                if (includeDots)
+                {
+                    GameObject dot = GameObject.Instantiate(dotObj, graphContainer.transform);
+                    dot.GetComponent<RectTransform>().localPosition = coord;
+                }
 
-                GameObject line = Instantiate(lineObj, graphContainer.transform);
+                GameObject line = GameObject.Instantiate(lineObj, graphContainer.transform);
                 line.GetComponent<RectTransform>().localPosition = coord;
 
                 float length = Vector2.Distance(coord, previous);
@@ -92,5 +68,4 @@ public class DataViewer : MonoBehaviour
 
         Debug.Log("Graph Drawn");
     }
-
 }

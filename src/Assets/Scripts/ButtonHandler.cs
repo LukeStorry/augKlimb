@@ -2,13 +2,15 @@
 using UnityEngine.SceneManagement;
 using System.IO;
 
-public class ButtonHandler : MonoBehaviour {
-    
-	public void GoToScene (string sceneName) {
+public class ButtonHandler : MonoBehaviour
+{
+    public void GoToScene(string sceneName)
+    {
         SceneManager.LoadScene(sceneName);
     }
 
-    public void OpenLink (string url) {
+    public void OpenLink(string url)
+    {
         Application.OpenURL(url);
     }
 
