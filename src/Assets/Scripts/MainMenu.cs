@@ -15,6 +15,7 @@ public class MainMenu : MonoBehaviour
         gameObject.transform.Find("About Button").GetComponent<Button>().onClick.AddListener(delegate { Application.OpenURL("https://lukestorry.co.uk/augKlimb/"); });
         gameObject.transform.Find("Feedback Button").GetComponent<Button>().onClick.AddListener(delegate { Application.OpenURL("https://goo.gl/forms/GGdaJq2hBdIhsOKX2"); });
 
+        gameObject.transform.Find("Version Text").GetComponent<Text>().text += Application.version;
     }
 
 }
