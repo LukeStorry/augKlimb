@@ -13,7 +13,7 @@ public class DataScroller : MonoBehaviour
         gameObject.transform.Find("Back Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene(0); });
         scrollContent.transform.Find("DataItem").gameObject.SetActive(false);
 
-        foreach (ClimbData climb in PersistentInfo.climbs)
+        foreach (ClimbData climb in PersistentInfo.Climbs)
         {
             AddToScroll(climb);
         }
@@ -31,7 +31,7 @@ public class DataScroller : MonoBehaviour
 
     void SelectClimb(ClimbData climb)
     {
-        PersistentInfo.currentClimb = climb;
+        PersistentInfo.CurrentClimb = climb;
         SceneManager.LoadScene("ViewClimb");
     }
 }

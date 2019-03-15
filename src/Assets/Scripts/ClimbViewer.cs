@@ -10,8 +10,7 @@ public class ClimbViewer : MonoBehaviour
 
     void Start()
     {
-        climb = PersistentInfo.currentClimb;
-        if (PersistentInfo.climbs.Count == 0) climb = FileHandler.LoadClimbs()[0]; // for testing the individual ClimbView scene without going through the scroller
+        climb = PersistentInfo.CurrentClimb;
 
         gameObject.transform.Find("Back Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene("ViewAllData"); });
         gameObject.transform.Find("Title").GetComponent<Text>().text = climb.Date.ToString("F", null);
