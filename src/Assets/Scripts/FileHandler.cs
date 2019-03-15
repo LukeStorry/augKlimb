@@ -5,7 +5,6 @@ using System;
 
 public class FileHandler
 {
-    private static string dateFormat = "yyMMdd-HHmmss";
     private static string climbsFolder = Path.Combine(Application.persistentDataPath, "climbs");
 
 
@@ -13,12 +12,16 @@ public class FileHandler
     public static void SaveClimb(ClimbData climb)
     {
         if (!Directory.Exists(climbsFolder)) Directory.CreateDirectory(climbsFolder);
-
-        string filename = "climb_" + climb.Date.ToString(dateFormat) + ".json";
+        
         string jsonString = JsonUtility.ToJson(climb);
+        
+        File.WriteAllText(CalcFilePath(climb), jsonString);
+        Debug.Log(CalcFilePath(climb) + " written.");
+    }
 
-        File.WriteAllText(Path.Combine(climbsFolder, filename), jsonString);
-        Debug.Log(filename + " written to " + climbsFolder);
+    private static string CalcFilePath(ClimbData climb)
+    {
+        return Path.Combine(climbsFolder, "climb_" + climb.Date.ToString("yyMMdd-HHmmss") + ".json");
     }
 
     public static List<ClimbData> LoadClimbs()
@@ -34,5 +37,12 @@ public class FileHandler
             climbs.Add(JsonUtility.FromJson<ClimbData>(fileContents));
         }
         return climbs;
+    }
+
+    public static void RemoveClimb(ClimbData climb)
+    {
+        File.Delete(CalcFilePath(climb));
+        Debug.Log(CalcFilePath(climb) + " deleted.");
+        PersistentInfo.climbs.Remove(climb);
     }
 }

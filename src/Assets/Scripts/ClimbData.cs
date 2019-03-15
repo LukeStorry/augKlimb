@@ -32,8 +32,6 @@ public class ClimbData
     // Removes data after the cut-off point, given as 0-1
     public void Crop(float cut)
     {
-        if (TimeTaken < 7 || cut < 0.5) return;
-
         Debug.Log("Cropping climb at " + cut.ToString());
         float newLength = cut * accelerometer.Count;
         accelerometer = accelerometer.GetRange(0, (int) newLength);
