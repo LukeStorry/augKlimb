@@ -39,7 +39,7 @@ public class AccelerometerRecorder : MonoBehaviour
         else
         {
             timerText.text = Timer().ToString("#0.0");
-            float acc = new Vector3(Input.acceleration.x, Input.acceleration.y, Input.acceleration.z).magnitude;
+            float acc = new Vector3(Input.acceleration.x, Input.acceleration.y, Input.acceleration.z).magnitude -1; // -1 offset for gravity
             data.Add(new DataPoint(DateTime.Now.Ticks, acc));
         }
 

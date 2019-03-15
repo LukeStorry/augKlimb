@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -28,8 +27,20 @@ public class ClimbViewer : MonoBehaviour
     void Crop()
     {
         float scrollPosition = gameObject.transform.Find("Scroll View").GetComponent<ScrollRect>().horizontalNormalizedPosition;
-        climb.Crop(Mathf.Sqrt(scrollPosition));
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        if (scrollPosition < 0.4 || scrollPosition > 0.99) return;
+
+        float cropLocation = Mathf.Sqrt(scrollPosition);
+
+        GameObject confirmationDialog = Instantiate(Resources.Load("Confimation Box") as GameObject, gameObject.transform);
+        string message = System.String.Format("Are you sure you want to delete all climb data after {0:0.0} seconds?", cropLocation * climb.TimeTaken);
+        confirmationDialog.transform.Find("Message").gameObject.GetComponent<Text>().text = message;
+
+        confirmationDialog.transform.Find("No Button").gameObject.GetComponent<Button>().onClick.AddListener(delegate { Destroy(confirmationDialog); });
+        confirmationDialog.transform.Find("Yes Button").gameObject.GetComponent<Button>().onClick.AddListener(delegate
+                                                                                                            {
+                                                                                                                climb.Crop(cropLocation);
+                                                                                                                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                                                                                                            });
     }
 }
 
