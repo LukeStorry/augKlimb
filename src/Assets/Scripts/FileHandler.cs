@@ -41,6 +41,9 @@ public class FileHandler
     {
         string fileContents = File.ReadAllText(filepath);
         ClimbData climb = JsonUtility.FromJson<ClimbData>(fileContents);
+
+        if (climb == null) throw new Exception("Climb File not Valid.");
+
         Debug.Log("Climb Loaded: " + climb.accelerometer.Count + " datapoints, from file:  " + filepath);
         PersistentInfo.climbs.Insert(0, climb);
         return climb;

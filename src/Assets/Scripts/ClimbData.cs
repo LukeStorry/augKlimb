@@ -5,7 +5,7 @@ using UnityEngine;
 [Serializable]
 public class ClimbData
 {
-    public float smoothness = 0;
+    public float smoothness;
     public List<DataPoint> accelerometer;
     public float TimeTaken
     {
@@ -20,7 +20,6 @@ public class ClimbData
     {
         get { return "Time: " + TimeTaken.ToString("#0.0") + "\n Smoothness: " + smoothness.ToString("#0.0"); }
     }
-
 
     public ClimbData(List<DataPoint> accelerometer)
     {

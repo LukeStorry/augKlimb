@@ -1243,7 +1243,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Import
+  m_Text: import
 --- !u!222 &1993735082
 CanvasRenderer:
   m_ObjectHideFlags: 0
