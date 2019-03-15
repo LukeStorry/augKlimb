@@ -29,9 +29,18 @@ public class ClimbData
         Debug.Log("ClimbData Created");
     }
 
+    // Removes data after the cut-off point, given as 0-1
+    public void Crop(float cut)
+    {
+        if (TimeTaken < 7 || cut < 0.5) return;
 
-    //TODO add "remove from XX time", and update timeTaken & smoothness in there too.
-
+        Debug.Log("Cropping climb at " + cut.ToString());
+        float newLength = cut * accelerometer.Count;
+        accelerometer = accelerometer.GetRange(0, (int) newLength);
+        smoothness = CalcSmoothness(accelerometer);
+        FileHandler.SaveClimb(this);
+    } 
+    
     private static float CalcSmoothness(List<DataPoint> data)
     {
         float avg = 0;
