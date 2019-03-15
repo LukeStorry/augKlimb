@@ -14,35 +14,43 @@ public class FileHandler
         if (!Directory.Exists(climbsFolder)) Directory.CreateDirectory(climbsFolder);
         
         string jsonString = JsonUtility.ToJson(climb);
-        
-        File.WriteAllText(CalcFilePath(climb), jsonString);
-        Debug.Log(CalcFilePath(climb) + " written.");
+        File.WriteAllText(ClimbPath(climb), jsonString);
+        Debug.Log(ClimbPath(climb) + " written.");
+
+        PersistentInfo.climbs.Insert(0, climb);
     }
 
-    private static string CalcFilePath(ClimbData climb)
+    public static string ClimbPath(ClimbData climb)
     {
-        return Path.Combine(climbsFolder, "climb_" + climb.Date.ToString("yyMMdd-HHmmss") + ".json");
+        return Path.Combine(climbsFolder, "climb_" + climb.Date.ToString("yyMMdd-HHmmss") + ".txt");
     }
 
     public static List<ClimbData> LoadClimbs()
     {
         List<ClimbData> climbs = new List<ClimbData>();
 
-        FileInfo[] files = new DirectoryInfo(climbsFolder).GetFiles("*.json");
+        FileInfo[] files = new DirectoryInfo(climbsFolder).GetFiles("*.txt");
         Array.Reverse(files);
         foreach (FileInfo file in files)
         {
-            string fileContents = File.ReadAllText(file.FullName);
-            Debug.Log("File Loaded: " + file.FullName);
-            climbs.Add(JsonUtility.FromJson<ClimbData>(fileContents));
+            climbs.Add(LoadClimb(file.Name));
         }
         return climbs;
     }
 
+    public static ClimbData LoadClimb(string filepath)
+    {
+        string fileContents = File.ReadAllText(filepath);
+        ClimbData climb = JsonUtility.FromJson<ClimbData>(fileContents);
+        Debug.Log("Climb with " + climb.accelerometer.Count + "datapoints has been loaded from " + filepath);
+        PersistentInfo.climbs.Insert(0, climb);
+        return climb;
+    }
+
     public static void RemoveClimb(ClimbData climb)
     {
-        File.Delete(CalcFilePath(climb));
-        Debug.Log(CalcFilePath(climb) + " deleted.");
+        File.Delete(ClimbPath(climb));
+        Debug.Log(ClimbPath(climb) + " deleted.");
         PersistentInfo.climbs.Remove(climb);
     }
 }
