@@ -8,7 +8,7 @@ public static class GraphDrawer
     private static GameObject lineObj;
 
     // Draws a graph of the given data, within the bounds of a given graphContainer's RectTransform
-    public static void Draw(GameObject graphContainer, List<DataPoint> data, float lineWidth = 5, bool includeDots = false)
+    public static void Draw(GameObject graphContainer, List<DataPoint> data, bool includeDots = false, bool includeSeconds = false, float lineWidth = 5)
     {
         dotObj = Resources.Load("Dot") as GameObject;
         lineObj = Resources.Load("Line") as GameObject;
@@ -62,10 +62,27 @@ public static class GraphDrawer
             previous = coord;
         }
 
-        // Add Y axis labels
+        // Add axis labels
         graphContainer.transform.Find("Min").GetComponent<Text>().text = minAcc.ToString("#0.00");
         graphContainer.transform.Find("Max").GetComponent<Text>().text = maxAcc.ToString("#0.00");
 
+        if (includeSeconds)
+        {
+            GameObject textBox = Resources.Load("TextBox") as GameObject;
+            float duration = (data[data.Count - 1].time - data[0].time)/ 10000000.0f;
+            Debug.Log(duration);
+            for (int second = 1; second < duration; second++)
+            {
+                GameObject label = GameObject.Instantiate(textBox, graphContainer.transform);
+
+                float location = (second * 10000000.0f) * xMultiplier - graphWidth / 2;
+
+                label.GetComponent<RectTransform>().localPosition = new Vector2(location, 5-graphHeight / 2);
+                label.GetComponent<Text>().text = second.ToString();
+
+            }
+
+        }
         Debug.Log("Graph Drawn");
     }
 }

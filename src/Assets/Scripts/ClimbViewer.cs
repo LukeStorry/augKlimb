@@ -19,7 +19,7 @@ public class ClimbViewer : MonoBehaviour
         graphContainer.GetComponent<RectTransform>().sizeDelta = graphSize;
         scrollContent.GetComponent<RectTransform>().sizeDelta = graphSize + new Vector2(20, 0);
 
-        GraphDrawer.Draw(graphContainer, climb.accelerometer, includeDots: true);
+        GraphDrawer.Draw(graphContainer, climb.accelerometer, includeDots: true, includeSeconds: true);
 
         gameObject.transform.Find("Crop Button").GetComponent<Button>().onClick.AddListener(Crop);
     }
