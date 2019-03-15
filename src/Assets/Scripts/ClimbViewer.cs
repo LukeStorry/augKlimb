@@ -10,9 +10,10 @@ public class ClimbViewer : MonoBehaviour
 
     void Start()
     {
-        gameObject.transform.Find("Back Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene("ViewAllData"); });
-
         climb = PersistentInfo.currentClimb;
+        if (PersistentInfo.climbs.Count == 0) climb = FileHandler.LoadClimbs()[0]; // for testing the individual ClimbView scene without going through the scroller
+
+        gameObject.transform.Find("Back Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene("ViewAllData"); });
         gameObject.transform.Find("Title").GetComponent<Text>().text = climb.Date.ToString("F", null);
         gameObject.transform.Find("Details").GetComponent<Text>().text = climb.InfoText.Replace("\n", ", ");
 
@@ -65,7 +66,11 @@ public class ClimbViewer : MonoBehaviour
 
     void Share()
     {
-        new NativeShare().AddFile(FileHandler.ClimbPath(climb)).Share(); // SetSubject("Here's some augClimb Data").SetText("Check out this climb data!")
+        string platform = Application.platform.ToString();
+        string filepath = FileHandler.ClimbPath(climb);
+
+        if (platform.Contains("Windows")) Application.OpenURL(filepath);
+        else new NativeShare().AddFile(filepath).Share(); 
     }
 }
 

@@ -726,7 +726,6 @@ GameObject:
   - component: {fileID: 1775488864}
   - component: {fileID: 1775488863}
   - component: {fileID: 1775488862}
-  - component: {fileID: 1775488865}
   m_Layer: 5
   m_Name: Scroll View
   m_TagString: Untagged
@@ -818,19 +817,6 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.ScrollRect+ScrollRectEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &1775488865
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1775488860}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4d86091cec4fb0438e7998bf8a3e263, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scrollContent: {fileID: 790364918}
-  dataItem: {fileID: 1898387452617000, guid: 003e6efa8589ea048a6225282efcf0c9, type: 2}
 --- !u!1 &1863603113
 GameObject:
   m_ObjectHideFlags: 0
@@ -1047,6 +1033,7 @@ GameObject:
   - component: {fileID: 1987238686}
   - component: {fileID: 1987238685}
   - component: {fileID: 1987238684}
+  - component: {fileID: 1987238688}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -1133,6 +1120,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1987238688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1987238683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4d86091cec4fb0438e7998bf8a3e263, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scrollContent: {fileID: 790364918}
+  dataItem: {fileID: 1898387452617000, guid: 003e6efa8589ea048a6225282efcf0c9, type: 2}
 --- !u!1 &1993735078
 GameObject:
   m_ObjectHideFlags: 0

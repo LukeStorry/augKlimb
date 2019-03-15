@@ -5,8 +5,7 @@ using System;
 
 public class FileHandler
 {
-    private static string climbsFolder = Path.Combine(Application.persistentDataPath, "climbs");
-
+    public static string climbsFolder = Path.Combine(Application.persistentDataPath, "climbs");
 
     // Saves the data as a timestamped csv file, with the info text as the first line
     public static void SaveClimb(ClimbData climb)
@@ -33,7 +32,7 @@ public class FileHandler
         Array.Reverse(files);
         foreach (FileInfo file in files)
         {
-            climbs.Add(LoadClimb(file.Name));
+            climbs.Add(LoadClimb(file.FullName));
         }
         return climbs;
     }
@@ -42,7 +41,7 @@ public class FileHandler
     {
         string fileContents = File.ReadAllText(filepath);
         ClimbData climb = JsonUtility.FromJson<ClimbData>(fileContents);
-        Debug.Log("Climb with " + climb.accelerometer.Count + "datapoints has been loaded from " + filepath);
+        Debug.Log("Climb Loaded: " + climb.accelerometer.Count + " datapoints, from file:  " + filepath);
         PersistentInfo.climbs.Insert(0, climb);
         return climb;
     }
