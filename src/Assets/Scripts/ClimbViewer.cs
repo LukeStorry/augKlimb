@@ -5,8 +5,9 @@ using UnityEngine.UI;
 public class ClimbViewer : MonoBehaviour
 {
     public GameObject scrollContent;
-    GameObject graphContainer;
+    private GameObject graphContainer;
     private ClimbData climb;
+
     void Start()
     {
         gameObject.transform.Find("Back Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene("ViewAllData"); });
@@ -25,6 +26,7 @@ public class ClimbViewer : MonoBehaviour
 
         gameObject.transform.Find("Crop Button").GetComponent<Button>().onClick.AddListener(Crop);
         gameObject.transform.Find("Bin Button").GetComponent<Button>().onClick.AddListener(Delete);
+        gameObject.transform.Find("Share Button").GetComponent<Button>().onClick.AddListener(Share);
     }
 
     void Delete()
@@ -58,6 +60,12 @@ public class ClimbViewer : MonoBehaviour
             climb.Crop(scrollPosition);
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         });
+    }
+
+
+    void Share()
+    {
+        new NativeShare().AddFile(FileHandler.ClimbPath(climb)).Share(); // SetSubject("Here's some augClimb Data").SetText("Check out this climb data!")
     }
 }
 

@@ -82,7 +82,6 @@ public static class GraphDrawer
             }
 
         }
-        Debug.Log("Graph Drawn");
     }
 
     // Draws red line at location signified by parameter given as 0-1 
@@ -90,7 +89,6 @@ public static class GraphDrawer
     {
         GameObject line = Object.Instantiate(lineObj, graphContainer.transform);
         line.GetComponent<RectTransform>().localPosition = new Vector2((location - 0.5f) * graphContainer.GetComponent<RectTransform>().rect.width, -1000);
-        Debug.Log(line.GetComponent<RectTransform>().localPosition);
         line.GetComponent<RectTransform>().sizeDelta = new Vector2(2000, 10);
         line.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0, 0, 90);
         line.GetComponent<Image>().color = color;
