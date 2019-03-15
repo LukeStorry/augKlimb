@@ -9,6 +9,8 @@ public class ClimbViewer : MonoBehaviour
     private ClimbData climb;
     void Start()
     {
+        gameObject.transform.Find("Back Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene("ViewAllData"); });
+
         climb = PersistentInfo.currentClimb;
         gameObject.transform.Find("Title").GetComponent<Text>().text = climb.Date.ToString("F", null);
         gameObject.transform.Find("Details").GetComponent<Text>().text = climb.InfoText.Replace("\n", ", ");

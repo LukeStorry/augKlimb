@@ -34,11 +34,11 @@ public class ClimbData
     {
         Debug.Log("Cropping climb at " + cut.ToString());
         float newLength = cut * accelerometer.Count;
-        accelerometer = accelerometer.GetRange(0, (int) newLength);
+        accelerometer = accelerometer.GetRange(0, (int)newLength);
         smoothness = CalcSmoothness(accelerometer);
         FileHandler.SaveClimb(this);
-    } 
-    
+    }
+
     private static float CalcSmoothness(List<DataPoint> data)
     {
         float avg = 0;

@@ -2,12 +2,12 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class AccelerometerRecorder : MonoBehaviour
 {
-    public Text timerText;
-    public Button startButton, stopButton;
-
+    private Text timerText;
+    private Button startButton, stopButton;
     private Int64 startTime;
     private List<DataPoint> data;
     private bool running = false;
@@ -16,9 +16,17 @@ public class AccelerometerRecorder : MonoBehaviour
 
     void Start()
     {
-        startButton.onClick.AddListener(StartRecord);
-        stopButton.onClick.AddListener(StopRecord);
+        gameObject.transform.Find("Back Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene(0); });
+
+        timerText = gameObject.transform.Find("Timer Text").GetComponent<Text>();
         timerText.text = "ready";
+
+        startButton = gameObject.transform.Find("Start Button").GetComponent<Button>();
+        startButton.onClick.AddListener(StartButtonPressed);
+
+        stopButton = gameObject.transform.Find("Stop Button").GetComponent<Button>();
+        stopButton.onClick.AddListener(StopButtonPressed);
+
         buttonReadyColour = startButton.GetComponent<Image>().color;
         buttonNotReadyColour = stopButton.GetComponent<Image>().color;
     }
@@ -39,15 +47,16 @@ public class AccelerometerRecorder : MonoBehaviour
         else
         {
             timerText.text = Timer().ToString("#0.0");
-            float acc = new Vector3(Input.acceleration.x, Input.acceleration.y, Input.acceleration.z).magnitude -1; // -1 offset for gravity
+            float acc = new Vector3(Input.acceleration.x, Input.acceleration.y, Input.acceleration.z).magnitude - 1; // -1 offset for gravity
             data.Add(new DataPoint(DateTime.Now.Ticks, acc));
         }
 
     }
 
 
-    public void StartRecord()
+    public void StartButtonPressed()
     {
+        gameObject.transform.Find("Explanation").gameObject.SetActive(false);
         if (running) return;
 
         running = true;
@@ -60,7 +69,7 @@ public class AccelerometerRecorder : MonoBehaviour
         stopButton.GetComponent<Image>().color = buttonReadyColour;
     }
 
-    public void StopRecord()
+    public void StopButtonPressed()
     {
         if (!running) return;
         running = false;
