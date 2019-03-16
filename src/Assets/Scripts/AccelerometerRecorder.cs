@@ -56,6 +56,7 @@ public class AccelerometerRecorder : MonoBehaviour
 
     public void StartButtonPressed()
     {
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
         gameObject.transform.Find("Explanation").gameObject.SetActive(false);
         if (running) return;
 
@@ -71,6 +72,7 @@ public class AccelerometerRecorder : MonoBehaviour
 
     public void StopButtonPressed()
     {
+        Screen.sleepTimeout = SleepTimeout.SystemSetting;
         if (!running) return;
         running = false;
         Debug.Log("Stopped");
