@@ -1,71 +1,58 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
-public class ClimbImporter : MonoBehaviour
+namespace GracesGames.SimpleFileBrowser.Scripts
 {
-    private string originalText;
 
-    void Start()
+    public class ClimbImporter : MonoBehaviour
     {
-        originalText = gameObject.GetComponent<Text>().text;
-        gameObject.GetComponent<Button>().onClick.AddListener(ImportFile);
-    }
+        public GameObject FileBrowserPrefab;
+        private string originalText;
 
-    private void ImportFile()
-    {
-        string path = selectFile();
-        try
+        void Start()
         {
-            ClimbData climb = FileHandler.LoadClimb(path);
-            FileHandler.SaveClimb(climb);
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e.Message);
-            gameObject.GetComponent<Text>().text = e.Message;
-            StartCoroutine(ResetText());
+            originalText = gameObject.GetComponent<Text>().text;
+            gameObject.GetComponent<Button>().onClick.AddListener(LaunchFileBrowser);
         }
 
-    }
-
-    IEnumerator ResetText()
-    {
-        yield return new WaitForSeconds(3);
-        gameObject.GetComponent<Text>().text = originalText;
-    }
-
-    private string selectFile()
-    {
-        string path = "";
-        string platform = Application.platform.ToString();
-
-#if UNITY_EDITOR
-            path = EditorUtility.OpenFilePanel("Select Climb File", "", "txt");
-            Debug.Log(path);
-
-#elif UNITY_ANDROID
-        try
+        // launches a platform-specific file browser and returns the path of the selected file
+        private void LaunchFileBrowser()
         {
-            AndroidJavaClass jc = new AndroidJavaClass("android.os.Environment");
-            path = jc.CallStatic<AndroidJavaObject>("getExternalStorageDirectory").Call<String>("getAbsolutePath");
+            GameObject fileBrowserObject = Instantiate(FileBrowserPrefab, transform);
+            //fileBrowserObject.name = "FileBrowser";
+            FileBrowser fileBrowserScript = fileBrowserObject.GetComponent<FileBrowser>();
+            fileBrowserScript.SetupFileBrowser(ViewMode.Portrait);
+            fileBrowserScript.OpenFilePanel(new string[] { "txt" });
+            fileBrowserScript.OnFileSelect += ImportFile;  // subscribes to event (calls using path) 
         }
-        catch (e)
-        {
-            Debug.Log(e.Message);
-        }
-#endif
 
-        // TODO add support for other platforms (mainly IOS)
-        return path;
+        // selects and parses an external climb file, then saves to data folder (cached). Displays exceptions in the textbox of attached object.
+        private void ImportFile(string path)
+        {
+            try
+            {
+                ClimbData climb = FileHandler.LoadClimb(path);
+                FileHandler.SaveClimb(climb);
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e.Message);
+                gameObject.GetComponent<Text>().text = e.Message;
+                StartCoroutine(ResetText());
+            }
+
+        }
+
+        IEnumerator ResetText()
+        {
+            yield return new WaitForSeconds(3);
+            gameObject.GetComponent<Text>().text = originalText;
+        }
     }
+
 }
-

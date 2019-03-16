@@ -17,6 +17,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ViewClimb.unity
     guid: 2cd79727bb7c0ad429a61f9ce0ac1590
-  - enabled: 1
-    path: Assets/Scenes/Video.unity
+  - enabled: 0
+    path: 
     guid: 9d1ffad9864321945822110bc84434e1
