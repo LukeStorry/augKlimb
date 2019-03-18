@@ -37,8 +37,8 @@ public static class GraphDrawer
         Vector2 previous = Vector2.zero;
         foreach (DataPoint dataPoint in data)
         {
-            float x = (dataPoint.time - minTime) * xMultiplier - graphWidth / 2;
-            float y = (dataPoint.acc - minAcc) * yMultiplier - graphHeight / 2;
+            float x = (dataPoint.time - minTime) * xMultiplier;
+            float y = (dataPoint.acc - minAcc) * yMultiplier;
             Vector2 coord = new Vector2(x, y);
 
             if (previous != Vector2.zero)
@@ -72,11 +72,11 @@ public static class GraphDrawer
             float duration = (data[data.Count - 1].time - data[0].time) / 10000000.0f;
             for (int second = 1; second < duration; second++)
             {
-                GameObject label = GameObject.Instantiate(textBox, graphContainer.transform);
+                GameObject label = Object.Instantiate(textBox, graphContainer.transform);
 
-                float location = (second * 10000000.0f) * xMultiplier - graphWidth / 2;
+                float location = (second * 10000000.0f) * xMultiplier;
 
-                label.GetComponent<RectTransform>().localPosition = new Vector2(location, 5 - graphHeight / 2);
+                label.GetComponent<RectTransform>().localPosition = new Vector2(location, 5);
                 label.GetComponent<Text>().text = second.ToString();
 
             }
@@ -88,7 +88,7 @@ public static class GraphDrawer
     public static GameObject VerticalLine(GameObject graphContainer, float location, Color color)
     {
         GameObject line = Object.Instantiate(lineObj, graphContainer.transform);
-        line.GetComponent<RectTransform>().localPosition = new Vector2((location - 0.5f) * graphContainer.GetComponent<RectTransform>().rect.width, -1000);
+        line.GetComponent<RectTransform>().localPosition = new Vector2(location * graphContainer.GetComponent<RectTransform>().rect.width, -1000);
         line.GetComponent<RectTransform>().sizeDelta = new Vector2(2000, 10);
         line.GetComponent<RectTransform>().localRotation = Quaternion.Euler(0, 0, 90);
         line.GetComponent<Image>().color = color;

@@ -1,32 +1,51 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Video;
 
 public class ClimbViewer : MonoBehaviour
 {
-    public GameObject scrollContent;
+    public GameObject backButton, title, details, shareButton, cropButton, binButton, video, scrollView, scrollContent, scrollBar;
+
     private GameObject graphContainer;
     private ClimbData climb;
+    private VideoPlayer vidPlayer;
 
     void Start()
     {
         climb = PersistentInfo.CurrentClimb;
 
-        gameObject.transform.Find("Back Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene("ViewAllData"); });
-        gameObject.transform.Find("Title").GetComponent<Text>().text = climb.Date.ToString("F", null);
-        gameObject.transform.Find("Details").GetComponent<Text>().text = climb.InfoText.Replace("\n", ", ");
+        backButton.GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene("ViewAllData"); });
+        title.GetComponent<Text>().text = climb.Date.ToString("F", null);
+        details.GetComponent<Text>().text = climb.InfoText.Replace("\n", ", ");
+        shareButton.GetComponent<Button>().onClick.AddListener(Share);
+        cropButton.GetComponent<Button>().onClick.AddListener(Crop);
+        binButton.GetComponent<Button>().onClick.AddListener(Delete);
 
         graphContainer = scrollContent.transform.Find("GraphContainer").gameObject;
 
-        Vector2 graphSize = new Vector2(100 * climb.TimeTaken, graphContainer.GetComponent<RectTransform>().rect.height);
-        graphContainer.GetComponent<RectTransform>().sizeDelta = graphSize;
-        scrollContent.GetComponent<RectTransform>().sizeDelta = graphSize + new Vector2(20, 0);
+        float graphHeight = graphContainer.GetComponent<RectTransform>().rect.height;
+        if (climb.video != null) 
+        {
+            graphHeight *= 0.4f;
+            vidPlayer = video.GetComponent<VideoPlayer>();
+            vidPlayer.url = climb.video;
+            InvokeRepeating("VideoScroller", 0, 0.1f);
+        }
+
+        float graphWidth = 100f * climb.TimeTaken;
+        graphContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(graphWidth, graphHeight);
+        scrollContent.GetComponent<RectTransform>().sizeDelta = new Vector2(20 + graphWidth, graphHeight);
+        scrollView.GetComponent<RectTransform>().sizeDelta = new Vector2(-30, graphHeight + 40);
 
         GraphDrawer.Draw(graphContainer, climb.accelerometer, includeDots: true, includeSeconds: true);
 
-        gameObject.transform.Find("Crop Button").GetComponent<Button>().onClick.AddListener(Crop);
-        gameObject.transform.Find("Bin Button").GetComponent<Button>().onClick.AddListener(Delete);
-        gameObject.transform.Find("Share Button").GetComponent<Button>().onClick.AddListener(Share);
+    }
+
+    private void VideoScroller() { 
+        // TODO calculate time difference of start points, as offset
+        vidPlayer.frame = (long)(vidPlayer.frameCount * scrollView.GetComponent<ScrollRect>().horizontalNormalizedPosition);
+        float scrollPosition = scrollView.GetComponent<ScrollRect>().horizontalNormalizedPosition;
     }
 
     void Delete()
@@ -61,7 +80,6 @@ public class ClimbViewer : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         });
     }
-
 
     void Share()
     {

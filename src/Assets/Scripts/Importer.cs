@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,7 +9,7 @@ using UnityEngine.SceneManagement;
 namespace GracesGames.SimpleFileBrowser.Scripts
 {
 
-    public class ClimbImporter : MonoBehaviour
+    public class Importer : MonoBehaviour
     {
         public GameObject FileBrowserPrefab;
         private string originalText;
@@ -26,7 +27,7 @@ namespace GracesGames.SimpleFileBrowser.Scripts
             //fileBrowserObject.name = "FileBrowser";
             FileBrowser fileBrowserScript = fileBrowserObject.GetComponent<FileBrowser>();
             fileBrowserScript.SetupFileBrowser(ViewMode.Portrait);
-            fileBrowserScript.OpenFilePanel(new string[] { "txt" });
+            fileBrowserScript.OpenFilePanel(new string[] { "txt", "mp4" });
             fileBrowserScript.OnFileSelect += ImportFile;  // subscribes to event (calls using path) 
         }
 
@@ -35,18 +36,26 @@ namespace GracesGames.SimpleFileBrowser.Scripts
         {
             try
             {
-                ClimbData climb = FileHandler.LoadClimb(path);
-                FileHandler.SaveClimb(climb);
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                if (Path.GetExtension(path) == ".txt")
+                {
+                    ClimbData climb = FileHandler.LoadClimb(path);
+                    FileHandler.SaveClimb(climb);
+                    SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                }
+                else
+                {
+                    gameObject.GetComponent<Text>().text = FileHandler.ImportVideo(path);
+                }
             }
             catch (Exception e)
             {
                 Debug.Log(e.Message);
                 gameObject.GetComponent<Text>().text = e.Message;
-                StartCoroutine(ResetText());
             }
-
+            StartCoroutine(ResetText());
         }
+
+
 
         IEnumerator ResetText()
         {

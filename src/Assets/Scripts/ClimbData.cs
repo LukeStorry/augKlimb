@@ -6,6 +6,7 @@ using UnityEngine;
 public class ClimbData
 {
     public float smoothness;
+    public string video;
     public List<DataPoint> accelerometer;
     public float TimeTaken
     {
