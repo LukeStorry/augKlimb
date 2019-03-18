@@ -59,7 +59,7 @@ namespace GracesGames.SimpleFileBrowser.Scripts
 
         IEnumerator ResetText()
         {
-            yield return new WaitForSeconds(3);
+            yield return new WaitForSeconds(5);
             gameObject.GetComponent<Text>().text = originalText;
         }
     }

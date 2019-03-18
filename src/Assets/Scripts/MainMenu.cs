@@ -2,12 +2,14 @@
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+
 public class MainMenu : MonoBehaviour
 {
     void Start()
     {
+
         gameObject.transform.Find("Accelero Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene("AccRecord"); });
-        //gameObject.transform.Find("Video Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene("Video"); });
+        gameObject.transform.Find("Video Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene("Video"); });
         gameObject.transform.Find("ViewData Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene("ViewAllData"); });
         //gameObject.transform.Find("???").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene("???"); });
 
