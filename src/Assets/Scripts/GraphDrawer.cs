@@ -84,7 +84,7 @@ public static class GraphDrawer
         }
     }
 
-    // Draws red line at location signified by parameter given as 0-1 
+    // Draws line at location signified by parameter given as 0-1 
     public static GameObject VerticalLine(GameObject graphContainer, float location, Color color)
     {
         GameObject line = Object.Instantiate(lineObj, graphContainer.transform);

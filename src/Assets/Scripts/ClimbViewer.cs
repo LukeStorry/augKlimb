@@ -5,35 +5,40 @@ using UnityEngine.Video;
 
 public class ClimbViewer : MonoBehaviour
 {
-    public GameObject backButton, title, details, shareButton, cropButton, binButton, video, scrollView, scrollContent, scrollBar;
-
-    private GameObject graphContainer;
+    private GameObject graphContainer, scrollView;
+    private RectTransform marker;
     private ClimbData climb;
     private VideoPlayer vidPlayer;
+    private ScrollRect scrollBar;
+    private float graphWidth;
 
     void Start()
     {
         climb = PersistentInfo.CurrentClimb;
 
-        backButton.GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene("ViewAllData"); });
-        title.GetComponent<Text>().text = climb.Date.ToString("F", null);
-        details.GetComponent<Text>().text = climb.InfoText.Replace("\n", ", ");
-        shareButton.GetComponent<Button>().onClick.AddListener(Share);
-        cropButton.GetComponent<Button>().onClick.AddListener(Crop);
-        binButton.GetComponent<Button>().onClick.AddListener(Delete);
+        gameObject.transform.Find("Back Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene("ViewAllData"); });
+        gameObject.transform.Find("Title").GetComponent<Text>().text = climb.Date.ToString("F", null);
+        gameObject.transform.Find("Details").GetComponent<Text>().text = climb.InfoText.Replace("\n", ", ");
+        gameObject.transform.Find("Share Button").GetComponent<Button>().onClick.AddListener(Share);
+        gameObject.transform.Find("Crop Button").GetComponent<Button>().onClick.AddListener(Crop);
+        gameObject.transform.Find("Bin Button").GetComponent<Button>().onClick.AddListener(Delete);
 
-        graphContainer = scrollContent.transform.Find("GraphContainer").gameObject;
+        scrollView = gameObject.transform.Find("Scroll View").gameObject;
+        scrollBar = scrollView.GetComponent<ScrollRect>();
+        Transform scrollContent = scrollView.transform.Find("Viewport").transform.Find("Content");
+        graphContainer = scrollContent.Find("GraphContainer").gameObject;
+        marker = scrollContent.Find("Marker").GetComponent<RectTransform>();
 
         float graphHeight = graphContainer.GetComponent<RectTransform>().rect.height;
         if (climb.video != null) 
         {
             graphHeight *= 0.4f;
-            vidPlayer = video.GetComponent<VideoPlayer>();
+            vidPlayer = gameObject.transform.Find("Video").GetComponent<VideoPlayer>();
             vidPlayer.url = climb.video;
             InvokeRepeating("VideoScroller", 0, 0.1f);
         }
 
-        float graphWidth = 100f * climb.TimeTaken;
+        graphWidth = 100f * climb.TimeTaken;
         graphContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(graphWidth, graphHeight);
         scrollContent.GetComponent<RectTransform>().sizeDelta = new Vector2(20 + graphWidth, graphHeight);
         scrollView.GetComponent<RectTransform>().sizeDelta = new Vector2(-30, graphHeight + 40);
@@ -42,9 +47,14 @@ public class ClimbViewer : MonoBehaviour
 
     }
 
+    private void Update()
+    {
+        marker.localPosition = new Vector2(graphWidth * scrollBar.horizontalNormalizedPosition +10, 0);
+    }
+
     private void VideoScroller() { 
         // TODO calculate time difference of start points, as offset
-        vidPlayer.frame = (long)(vidPlayer.frameCount * scrollView.GetComponent<ScrollRect>().horizontalNormalizedPosition);
+        vidPlayer.frame = (long)(vidPlayer.frameCount * scrollBar.horizontalNormalizedPosition);
         float scrollPosition = scrollView.GetComponent<ScrollRect>().horizontalNormalizedPosition;
     }
 
@@ -64,7 +74,6 @@ public class ClimbViewer : MonoBehaviour
     void Crop()
     {
         float scrollPosition = gameObject.transform.Find("Scroll View").GetComponent<ScrollRect>().horizontalNormalizedPosition;
-        GameObject line = GraphDrawer.VerticalLine(graphContainer, scrollPosition, Color.red);
 
         GameObject confirmationDialog = Instantiate(Resources.Load("Confimation Box") as GameObject, gameObject.transform);
         string message = System.String.Format("Are you sure you want to delete all climb data after {0:0.0} seconds?", scrollPosition * climb.TimeTaken);
@@ -72,7 +81,6 @@ public class ClimbViewer : MonoBehaviour
         confirmationDialog.transform.Find("No Button").gameObject.GetComponent<Button>().onClick.AddListener(delegate
         {
             Destroy(confirmationDialog);
-            Destroy(line);
         });
         confirmationDialog.transform.Find("Yes Button").gameObject.GetComponent<Button>().onClick.AddListener(delegate
         {

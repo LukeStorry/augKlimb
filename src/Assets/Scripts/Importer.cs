@@ -27,7 +27,7 @@ namespace GracesGames.SimpleFileBrowser.Scripts
             //fileBrowserObject.name = "FileBrowser";
             FileBrowser fileBrowserScript = fileBrowserObject.GetComponent<FileBrowser>();
             fileBrowserScript.SetupFileBrowser(ViewMode.Portrait);
-            fileBrowserScript.OpenFilePanel(new string[] { "txt", "mp4" });
+            fileBrowserScript.OpenFilePanel(new string[] { "txt", "mp4", "mov" });
             fileBrowserScript.OnFileSelect += ImportFile;  // subscribes to event (calls using path) 
         }
 
