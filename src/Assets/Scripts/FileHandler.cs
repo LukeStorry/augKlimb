@@ -8,6 +8,12 @@ public class FileHandler
     public static string climbsFolder = Path.Combine(Application.persistentDataPath, "climbs");
     public static string vidsFolder = Path.Combine(Application.persistentDataPath, "vids");
 
+    // Calculates a timestamped filepath for a climb
+    public static string ClimbPath(ClimbData climb)
+    {
+        return Path.Combine(climbsFolder, "climb_" + climb.Date.ToString("yyMMdd-HHmmss") + ".txt");
+    }
+
     // Saves the climb, both serialized to file and to the PI cache
     public static void SaveClimb(ClimbData climb)
     {
@@ -19,13 +25,8 @@ public class FileHandler
         if (!PersistentInfo.Climbs.Contains(climb)) PersistentInfo.Climbs.Insert(0, climb);
     }
 
-    // Calculates a timestamped filepath for a climb
-    public static string ClimbPath(ClimbData climb)
-    {
-        return Path.Combine(climbsFolder, "climb_" + climb.Date.ToString("yyMMdd-HHmmss") + ".txt");
-    }
 
-    // Parses and returns all climb files in data folder
+    // Parses and returns all Climb files in data folder
     public static List<ClimbData> LoadClimbs()
     {
         List<ClimbData> climbs = new List<ClimbData>();
@@ -42,33 +43,43 @@ public class FileHandler
         return climbs;
     }
 
+
     // Loads & returns a single climb given a filepath Throws an exception if the unSerialization fails.
-    public static ClimbData LoadClimb(string filepath)
+    public static ClimbData LoadClimb(string filepath, bool tryMatch = false)
     {
         string fileContents = File.ReadAllText(filepath);
         ClimbData climb = JsonUtility.FromJson<ClimbData>(fileContents);
 
         if (climb == null) throw new Exception("Climb File not Valid.");
-
+        if (tryMatch)
+        {
+            foreach (FileInfo file in new DirectoryInfo(vidsFolder).GetFiles("*"))
+            {
+                if (climb.IsMatch(file.CreationTime))
+                {
+                    climb.video = file.FullName;
+                    Debug.Log("Climb matched with" + file.ToString());
+                }
+            }
+        }
         Debug.Log("Climb Loaded: " + climb.accelerometer.Count + " datapoints, from file:  " + filepath);
         return climb;
     }
 
+
     // Attempts to match a video file to a climb file, then either attaches a copy or throws exception.
-    public static string ImportVideo(string path)
+    public static string ImportVideo(string oldPath)
     {
-        DateTime vidTime = File.GetCreationTime(path);
+        DateTime vidTime = File.GetCreationTime(oldPath); // TODO find better way than comparing minutes of file creation?
+        string internalPath = CopyVideo(oldPath);
+
         foreach (ClimbData climb in PersistentInfo.Climbs)
         {
-            if ( 1 > Mathf.Abs((float) climb.Date.Subtract(vidTime).TotalMinutes)) // TODO find better way than comparing minutes of file creation!
+            if (climb.IsMatch(vidTime))
             {
-                Debug.Log((climb.Date - vidTime));
-                Debug.Log((climb.Date - vidTime).TotalSeconds);
-                Debug.Log(vidTime.ToString("F", null) + " matched with climb: " + climb.Date.ToString("F", null));
-
-                climb.video = CopyVideo(path);
+                climb.video = internalPath;
                 SaveClimb(climb);
-
+                Debug.Log(vidTime.ToString("F", null) + " matched with climb: " + climb.Date.ToString("F", null));
                 return "Matched with climb: " + climb.Date.ToString("F", null);
             }
         }
@@ -78,7 +89,7 @@ public class FileHandler
 
 
     // Copies the video file to PersistentStorage and returns the new filepath
-    public static string CopyVideo(string oldPath)
+    public static string CopyVideo(string oldPath) // TODO add time parameter for timestamp saving?
     {
         if (!Directory.Exists(vidsFolder)) Directory.CreateDirectory(vidsFolder);
         string newPath = Path.Combine(vidsFolder, Path.GetFileName(oldPath));

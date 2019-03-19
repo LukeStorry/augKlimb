@@ -28,40 +28,37 @@ namespace GracesGames.SimpleFileBrowser.Scripts
             FileBrowser fileBrowserScript = fileBrowserObject.GetComponent<FileBrowser>();
             fileBrowserScript.SetupFileBrowser(ViewMode.Portrait);
             fileBrowserScript.OpenFilePanel(new string[] { "txt", "mp4", "mov" });
-            fileBrowserScript.OnFileSelect += ImportFile;  // subscribes to event (calls using path) 
+            fileBrowserScript.OnFileSelect += TryImportFile;  // subscribes to event (calls using path) 
         }
 
         // selects and parses an external climb file, then saves to data folder (cached). Displays exceptions in the textbox of attached object.
-        private void ImportFile(string path)
+        private void TryImportFile(string path)
         {
             try
             {
                 if (Path.GetExtension(path) == ".txt")
                 {
-                    ClimbData climb = FileHandler.LoadClimb(path);
+                    ClimbData climb = FileHandler.LoadClimb(path, tryMatch: true);
                     FileHandler.SaveClimb(climb);
                     SceneManager.LoadScene(SceneManager.GetActiveScene().name);
                 }
                 else
                 {
-                    gameObject.GetComponent<Text>().text = FileHandler.ImportVideo(path);
+                    gameObject.GetComponent<Text>().text =  FileHandler.ImportVideo(path);
                 }
             }
             catch (Exception e)
             {
                 Debug.Log(e.Message);
-                gameObject.GetComponent<Text>().text = e.Message;
+                gameObject.GetComponent<Text>().text =  e.Message;
             }
             StartCoroutine(ResetText());
         }
 
-
-
-        IEnumerator ResetText()
+        private IEnumerator ResetText()
         {
             yield return new WaitForSeconds(5);
             gameObject.GetComponent<Text>().text = originalText;
         }
     }
-
 }

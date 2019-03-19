@@ -58,6 +58,11 @@ public class ClimbData
         Debug.Log("Smoothness Calculated: " + totalSquaredDiff.ToString("0.000"));
         return totalSquaredDiff;
     }
+
+    public bool IsMatch(DateTime time)
+    {
+        return 2 > Mathf.Abs((float)this.Date.Subtract(time).TotalMinutes);
+    }
 }
 
 [Serializable]
