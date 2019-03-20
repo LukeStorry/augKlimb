@@ -16,8 +16,6 @@ public class AccelerometerRecorder : MonoBehaviour
 
     void Start()
     {
-        gameObject.transform.Find("Back Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene(0); });
-
         timerText = gameObject.transform.Find("Timer Text").GetComponent<Text>();
         timerText.text = "ready";
 
@@ -29,6 +27,12 @@ public class AccelerometerRecorder : MonoBehaviour
 
         buttonReadyColour = startButton.GetComponent<Image>().color;
         buttonNotReadyColour = stopButton.GetComponent<Image>().color;
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            SceneManager.LoadScene(0);
     }
 
     void FixedUpdate()

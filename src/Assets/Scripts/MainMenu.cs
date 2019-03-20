@@ -7,6 +7,7 @@ public class MainMenu : MonoBehaviour
 {
     void Start()
     {
+        Screen.fullScreen = false;
 
         gameObject.transform.Find("Accelero Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene("AccRecord"); });
         gameObject.transform.Find("Video Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene("Video"); });
@@ -20,4 +21,9 @@ public class MainMenu : MonoBehaviour
         gameObject.transform.Find("Version Text").GetComponent<Text>().text += Application.version;
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Application.Quit();
+    }
 }

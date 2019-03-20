@@ -8,9 +8,14 @@ using UnityEngine.SceneManagement;
 public class Videos : MonoBehaviour {
 
     void Start() {
-        gameObject.transform.Find("Back Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene(0); });
         gameObject.transform.Find("Record Button").GetComponent<Button>().onClick.AddListener(delegate { RecordVideo(); });
         RecordVideo();
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            SceneManager.LoadScene(0);
     }
 
     // Records a video, using https://github.com/yasirkula/UnityNativeCamera
