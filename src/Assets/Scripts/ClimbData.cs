@@ -6,11 +6,9 @@ using UnityEngine;
 public class ClimbData
 {
     public float smoothness;
-    public List<DataPoint> accelerometer;
-
     public string video = "";
     public float videoOffset; //seconds
-
+    public List<DataPoint> accelerometer;
 
     public float TimeTaken
     {
@@ -68,7 +66,7 @@ public class ClimbData
 
     public bool TryAttachingVideo(string vidPath, DateTime vidTime)
     {
-        float timeDifference = (float)Date.Subtract(vidTime).TotalMilliseconds / 1000 + 1; //TODO remove the +1 when more accurate measurement given
+        float timeDifference = (float)Date.Subtract(vidTime).TotalMilliseconds / 1000;
         Debug.Log("timediff:" + timeDifference);
         if (-timeDifference < TimeTaken)
         {

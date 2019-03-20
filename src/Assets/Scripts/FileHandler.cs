@@ -120,7 +120,7 @@ public class FileHandler
     public static string CopyVideo(string oldPath, DateTime time)
     {
         if (!Directory.Exists(vidsFolder)) Directory.CreateDirectory(vidsFolder);
-        string filename = time.ToString(vidDateFormat) + Path.GetExtension(oldPath);
+        string filename = "vid_" + time.ToString(vidDateFormat) + Path.GetExtension(oldPath);
         string newPath = Path.Combine(vidsFolder, filename);
         File.Copy(oldPath, newPath);
         return newPath;

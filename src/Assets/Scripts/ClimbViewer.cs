@@ -29,14 +29,12 @@ public class ClimbViewer : MonoBehaviour
         marker = scrollContent.Find("Marker").GetComponent<RectTransform>();
 
         float graphHeight = graphContainer.GetComponent<RectTransform>().rect.height;
-        if (climb.video != "") 
+        if (climb.video != "")
         {
             graphHeight *= 0.4f;
             vidPlayer = gameObject.transform.Find("Video").GetComponent<VideoPlayer>();
             vidPlayer.url = climb.video;
-            vidFramesOffset = (int) (climb.videoOffset * vidPlayer.frameRate);
-            Debug.Log("Calculated offset frames: " + vidFramesOffset + " for vid: " + climb.video);
-            InvokeRepeating("VideoScroller", 0, 0.1f);
+            vidFramesOffset = (int)(climb.videoOffset * vidPlayer.frameRate);
         }
 
         graphWidth = 100f * climb.TimeTaken;
@@ -50,16 +48,13 @@ public class ClimbViewer : MonoBehaviour
 
     private void Update()
     {
-        marker.localPosition = new Vector2(graphWidth * scrollBar.horizontalNormalizedPosition +10, 0);
         if (Input.GetKeyDown(KeyCode.Escape))
             SceneManager.LoadScene("ViewAllData");
-    }
 
-    private void VideoScroller() { 
-        // TODO calculate time difference of start points, as offset
-        vidPlayer.frame = vidFramesOffset + (long)(vidPlayer.frameRate * climb.TimeTaken * scrollBar.horizontalNormalizedPosition);
-        Debug.Log("FrameRate: " + vidPlayer.frameRate);
-        Debug.Log("Showing Frame: " + vidPlayer.frame + "/" + vidPlayer.frameCount);
+        marker.localPosition = new Vector2(graphWidth * scrollBar.horizontalNormalizedPosition + 10, 0);
+
+        if (vidPlayer != null)
+            vidPlayer.frame = vidFramesOffset + (long)(vidPlayer.frameRate * climb.TimeTaken * scrollBar.horizontalNormalizedPosition);
     }
 
     void Delete()
@@ -99,7 +94,7 @@ public class ClimbViewer : MonoBehaviour
         string filepath = FileHandler.ClimbPath(climb);
 
         if (platform.Contains("Windows")) Application.OpenURL(filepath);
-        else new NativeShare().AddFile(filepath).Share(); 
+        else new NativeShare().AddFile(filepath).Share();
     }
 }
 
