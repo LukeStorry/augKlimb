@@ -30,5 +30,10 @@
       android:authorities="AUGKLIMB"
       android:exported="false"
       android:grantUriPermissions="true" />
+    <provider
+      android:name="com.yasirkula.unity.NativeCameraContentProvider"
+      android:authorities="AUGKLIMB"
+      android:exported="false"
+      android:grantUriPermissions="true" />
   </application>
 </manifest>
