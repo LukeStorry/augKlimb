@@ -8,9 +8,7 @@ public class ClimbData
     public float smoothness;
     public List<DataPoint> accelerometer;
 
-    [NonSerialized]
-    public string video;
-    [NonSerialized]
+    public string video="";
     public float videoOffset; //seconds
 
 
@@ -67,17 +65,16 @@ public class ClimbData
 
     public bool TryAttachingVideo(string vidPath, DateTime vidTime)
     {
-        if (IsMatch(vidTime)){
-            videoOffset = vidTime.Ticks - Date.Ticks;
+        float timeDifference = (float) Date.Subtract(vidTime).TotalMilliseconds / 1000;
+        Debug.Log("timediff:" + timeDifference);
+        if (-timeDifference < TimeTaken)
+        {
             video = vidPath;
+            videoOffset = timeDifference;
             return true;
         }
         return false;
 
-    }
-    private bool IsMatch(DateTime time)
-    {
-        return 1 > Mathf.Abs((float)this.Date.Subtract(time).TotalMinutes);
     }
 }
 
