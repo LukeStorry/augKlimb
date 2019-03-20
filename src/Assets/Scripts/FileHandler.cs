@@ -58,11 +58,8 @@ public class FileHandler
         {
             foreach (FileInfo file in new DirectoryInfo(vidsFolder).GetFiles("*"))
             {
-                if (climb.IsMatch(CalcVidTime(file.FullName)))
-                {
-                    climb.video = file.FullName;
-                    Debug.Log("Climb matched with" + file.ToString());
-                }
+                if (climb.TryAttachingVideo(file.FullName, CalcVidTime(file.FullName)))
+                    Debug.Log("Climb matched with" + climb.video);
             }
             if (climb.video == null)
                 Debug.Log("No match found");
@@ -104,9 +101,8 @@ public class FileHandler
 
         foreach (ClimbData climb in PersistentInfo.Climbs)
         {
-            if (climb.IsMatch(vidTime))
+            if (climb.TryAttachingVideo(internalPath, vidTime))
             {
-                climb.video = internalPath;
                 SaveClimb(climb);
                 Debug.Log(vidTime.ToString("F", null) + " matched with climb: " + climb.Date.ToString("F", null));
                 return "Matched with climb: " + climb.Date.ToString("F", null);

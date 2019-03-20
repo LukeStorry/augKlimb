@@ -11,6 +11,7 @@ public class ClimbViewer : MonoBehaviour
     private VideoPlayer vidPlayer;
     private ScrollRect scrollBar;
     private float graphWidth;
+    private int vidFramesOffset;
 
     void Start()
     {
@@ -35,6 +36,7 @@ public class ClimbViewer : MonoBehaviour
             graphHeight *= 0.4f;
             vidPlayer = gameObject.transform.Find("Video").GetComponent<VideoPlayer>();
             vidPlayer.url = climb.video;
+            vidFramesOffset = (int) (climb.videoOffset * vidPlayer.frameRate);
             InvokeRepeating("VideoScroller", 0, 0.1f);
         }
 
@@ -54,7 +56,7 @@ public class ClimbViewer : MonoBehaviour
 
     private void VideoScroller() { 
         // TODO calculate time difference of start points, as offset
-        vidPlayer.frame = (long)(vidPlayer.frameRate * climb.TimeTaken * scrollBar.horizontalNormalizedPosition);
+        vidPlayer.frame = vidFramesOffset + (long)(vidPlayer.frameRate * climb.TimeTaken * scrollBar.horizontalNormalizedPosition);
     }
 
     void Delete()

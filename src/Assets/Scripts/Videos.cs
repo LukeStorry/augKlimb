@@ -14,7 +14,7 @@ public class Videos : MonoBehaviour {
     // Records a video, using https://github.com/yasirkula/UnityNativeCamera
     private void RecordVideo()
     {
-        DateTime vidTime = DateTime.Now;
+        DateTime vidTime = DateTime.Now; //TODO record only on the exact second?
 
         if (NativeCamera.IsCameraBusy())
             Debug.Log("Camera Busy");

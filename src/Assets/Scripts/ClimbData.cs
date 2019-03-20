@@ -6,9 +6,14 @@ using UnityEngine;
 public class ClimbData
 {
     public float smoothness;
+    public List<DataPoint> accelerometer;
+
     [NonSerialized]
     public string video;
-    public List<DataPoint> accelerometer;
+    [NonSerialized]
+    public float videoOffset; //seconds
+
+
     public float TimeTaken
     {
         get { return (accelerometer[accelerometer.Count - 1].time - accelerometer[0].time) / 10000000.0f; }
@@ -60,7 +65,17 @@ public class ClimbData
         return totalSquaredDiff;
     }
 
-    public bool IsMatch(DateTime time)
+    public bool TryAttachingVideo(string vidPath, DateTime vidTime)
+    {
+        if (IsMatch(vidTime)){
+            videoOffset = vidTime.Ticks - Date.Ticks;
+            video = vidPath;
+            return true;
+        }
+        return false;
+
+    }
+    private bool IsMatch(DateTime time)
     {
         return 1 > Mathf.Abs((float)this.Date.Subtract(time).TotalMinutes);
     }
