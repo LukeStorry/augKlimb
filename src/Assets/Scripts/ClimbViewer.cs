@@ -16,8 +16,6 @@ public class ClimbViewer : MonoBehaviour
     void Start()
     {
         climb = PersistentInfo.CurrentClimb;
-
-        gameObject.transform.Find("Back Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene("ViewAllData"); });
         gameObject.transform.Find("Title").GetComponent<Text>().text = climb.Date.ToString("F", null);
         gameObject.transform.Find("Details").GetComponent<Text>().text = climb.InfoText.Replace("\n", ", ");
         gameObject.transform.Find("Share Button").GetComponent<Button>().onClick.AddListener(Share);
@@ -37,6 +35,7 @@ public class ClimbViewer : MonoBehaviour
             vidPlayer = gameObject.transform.Find("Video").GetComponent<VideoPlayer>();
             vidPlayer.url = climb.video;
             vidFramesOffset = (int) (climb.videoOffset * vidPlayer.frameRate);
+            Debug.Log("Calculated offset frames: " + vidFramesOffset + " for vid: " + climb.video);
             InvokeRepeating("VideoScroller", 0, 0.1f);
         }
 
@@ -52,11 +51,15 @@ public class ClimbViewer : MonoBehaviour
     private void Update()
     {
         marker.localPosition = new Vector2(graphWidth * scrollBar.horizontalNormalizedPosition +10, 0);
+        if (Input.GetKeyDown(KeyCode.Escape))
+            SceneManager.LoadScene("ViewAllData");
     }
 
     private void VideoScroller() { 
         // TODO calculate time difference of start points, as offset
         vidPlayer.frame = vidFramesOffset + (long)(vidPlayer.frameRate * climb.TimeTaken * scrollBar.horizontalNormalizedPosition);
+        Debug.Log("FrameRate: " + vidPlayer.frameRate);
+        Debug.Log("Showing Frame: " + vidPlayer.frame + "/" + vidPlayer.frameCount);
     }
 
     void Delete()

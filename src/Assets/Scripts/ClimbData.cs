@@ -8,7 +8,7 @@ public class ClimbData
     public float smoothness;
     public List<DataPoint> accelerometer;
 
-    public string video="";
+    public string video = "";
     public float videoOffset; //seconds
 
 
@@ -33,6 +33,7 @@ public class ClimbData
         Debug.Log("ClimbData Created");
     }
 
+
     // Removes data after the cut-off point, given as 0-1
     public void Crop(float cut)
     {
@@ -42,6 +43,7 @@ public class ClimbData
         smoothness = CalcSmoothness(accelerometer);
         FileHandler.SaveClimb(this);
     }
+
 
     private static float CalcSmoothness(List<DataPoint> data)
     {
@@ -63,9 +65,10 @@ public class ClimbData
         return totalSquaredDiff;
     }
 
+
     public bool TryAttachingVideo(string vidPath, DateTime vidTime)
     {
-        float timeDifference = (float) Date.Subtract(vidTime).TotalMilliseconds / 1000;
+        float timeDifference = (float)Date.Subtract(vidTime).TotalMilliseconds / 1000 + 1; //TODO remove the +1 when more accurate measurement given
         Debug.Log("timediff:" + timeDifference);
         if (-timeDifference < TimeTaken)
         {
@@ -77,6 +80,8 @@ public class ClimbData
 
     }
 }
+
+
 
 [Serializable]
 public struct DataPoint

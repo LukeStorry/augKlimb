@@ -8,7 +8,7 @@ public class FileHandler
 {
     public static string climbsFolder = Path.Combine(Application.persistentDataPath, "climbs");
     public static string vidsFolder = Path.Combine(Application.persistentDataPath, "vids");
-    private static string vidDateFormat = "yyyyMMdd_HHmmss";
+    private static string vidDateFormat = "yyyyMMdd_HHmmssfff";
 
     // Calculates a timestamped filepath for a climb
     public static string ClimbPath(ClimbData climb)
@@ -54,7 +54,7 @@ public class FileHandler
         ClimbData climb = JsonUtility.FromJson<ClimbData>(fileContents);
 
         if (climb == null) throw new Exception("Climb File not Valid.");
-        if (tryMatch)
+        if (tryMatch && Directory.Exists(vidsFolder))
         {
             foreach (FileInfo file in new DirectoryInfo(vidsFolder).GetFiles("*"))
             {
@@ -74,16 +74,19 @@ public class FileHandler
     {
         DateTime result;
         string filename = Path.GetFileNameWithoutExtension(path);
-        Debug.Log("attempt to parse: " + filename);
+        int startIndex = filename.IndexOf('2');
+        string dateString = filename.Substring(startIndex, filename.Length - startIndex);
 
-        if (DateTime.TryParse(filename, out result))
+        Debug.Log("attempt to parse: " + dateString);
+
+        if (DateTime.TryParse(dateString, out result))
         {
             Debug.Log("Parsed Video Filename: " + result);
             return result;
         }
 
-        string dateString = filename.Substring(filename.Length - 15, 15);
-        if (DateTime.TryParseExact(dateString, vidDateFormat, null, DateTimeStyles.None, out result))
+        string[] dateFormats = { "yyyyMMdd_HHmmss", "yyyyMMdd_HHmmssfff" };
+        if (DateTime.TryParseExact(dateString, dateFormats, null, DateTimeStyles.None, out result))
         {
             Debug.Log("Exact-parsed Video Filename: " + result);
             return result;
