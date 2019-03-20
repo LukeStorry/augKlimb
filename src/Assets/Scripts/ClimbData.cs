@@ -6,6 +6,7 @@ using UnityEngine;
 public class ClimbData
 {
     public float smoothness;
+    [NonSerialized]
     public string video;
     public List<DataPoint> accelerometer;
     public float TimeTaken
@@ -61,7 +62,7 @@ public class ClimbData
 
     public bool IsMatch(DateTime time)
     {
-        return 2 > Mathf.Abs((float)this.Date.Subtract(time).TotalMinutes);
+        return 1 > Mathf.Abs((float)this.Date.Subtract(time).TotalMinutes);
     }
 }
 

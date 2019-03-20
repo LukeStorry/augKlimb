@@ -30,7 +30,7 @@ public class ClimbViewer : MonoBehaviour
         marker = scrollContent.Find("Marker").GetComponent<RectTransform>();
 
         float graphHeight = graphContainer.GetComponent<RectTransform>().rect.height;
-        if (climb.video != null) 
+        if (climb.video != "") 
         {
             graphHeight *= 0.4f;
             vidPlayer = gameObject.transform.Find("Video").GetComponent<VideoPlayer>();
@@ -54,8 +54,7 @@ public class ClimbViewer : MonoBehaviour
 
     private void VideoScroller() { 
         // TODO calculate time difference of start points, as offset
-        vidPlayer.frame = (long)(vidPlayer.frameCount * scrollBar.horizontalNormalizedPosition);
-        float scrollPosition = scrollView.GetComponent<ScrollRect>().horizontalNormalizedPosition;
+        vidPlayer.frame = (long)(vidPlayer.frameRate * climb.TimeTaken * scrollBar.horizontalNormalizedPosition);
     }
 
     void Delete()

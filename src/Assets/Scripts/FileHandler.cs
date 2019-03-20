@@ -2,11 +2,13 @@
 using UnityEngine;
 using System.IO;
 using System;
+using System.Globalization;
 
 public class FileHandler
 {
     public static string climbsFolder = Path.Combine(Application.persistentDataPath, "climbs");
     public static string vidsFolder = Path.Combine(Application.persistentDataPath, "vids");
+    private static string vidDateFormat = "yyyyMMdd_HHmmss";
 
     // Calculates a timestamped filepath for a climb
     public static string ClimbPath(ClimbData climb)
@@ -30,6 +32,7 @@ public class FileHandler
     public static List<ClimbData> LoadClimbs()
     {
         List<ClimbData> climbs = new List<ClimbData>();
+        if (!Directory.Exists(climbsFolder)) return climbs;
         FileInfo[] files = new DirectoryInfo(climbsFolder).GetFiles("*.txt");
         Array.Reverse(files);
         foreach (FileInfo file in files)
@@ -55,23 +58,49 @@ public class FileHandler
         {
             foreach (FileInfo file in new DirectoryInfo(vidsFolder).GetFiles("*"))
             {
-                if (climb.IsMatch(file.CreationTime))
+                if (climb.IsMatch(CalcVidTime(file.FullName)))
                 {
                     climb.video = file.FullName;
                     Debug.Log("Climb matched with" + file.ToString());
                 }
             }
+            if (climb.video == null)
+                Debug.Log("No match found");
         }
         Debug.Log("Climb Loaded: " + climb.accelerometer.Count + " datapoints, from file:  " + filepath);
         return climb;
     }
 
 
+    // Calculates the video time by parsing the filename
+    private static DateTime CalcVidTime(string path)
+    {
+        DateTime result;
+        string filename = Path.GetFileNameWithoutExtension(path);
+        Debug.Log("attempt to parse: " + filename);
+
+        if (DateTime.TryParse(filename, out result))
+        {
+            Debug.Log("Parsed Video Filename: " + result);
+            return result;
+        }
+
+        string dateString = filename.Substring(filename.Length - 15, 15);
+        if (DateTime.TryParseExact(dateString, vidDateFormat, null, DateTimeStyles.None, out result))
+        {
+            Debug.Log("Exact-parsed Video Filename: " + result);
+            return result;
+        }
+
+        return File.GetCreationTime(path);
+    }
+
+
     // Attempts to match a video file to a climb file, then either attaches a copy or throws exception.
     public static string ImportVideo(string oldPath)
     {
-        DateTime vidTime = File.GetCreationTime(oldPath); // TODO find better way than comparing minutes of file creation?
-        string internalPath = CopyVideo(oldPath);
+        DateTime vidTime = CalcVidTime(oldPath);
+        string internalPath = CopyVideo(oldPath, vidTime);
 
         foreach (ClimbData climb in PersistentInfo.Climbs)
         {
@@ -88,11 +117,12 @@ public class FileHandler
     }
 
 
-    // Copies the video file to PersistentStorage and returns the new filepath
-    public static string CopyVideo(string oldPath) // TODO add time parameter for timestamp saving?
+    // Copies the video file to PersistentStorage, timestamps the filename, and returns the new filepath
+    public static string CopyVideo(string oldPath, DateTime time)
     {
         if (!Directory.Exists(vidsFolder)) Directory.CreateDirectory(vidsFolder);
-        string newPath = Path.Combine(vidsFolder, Path.GetFileName(oldPath));
+        string filename = time.ToString(vidDateFormat) + Path.GetExtension(oldPath);
+        string newPath = Path.Combine(vidsFolder, filename);
         File.Copy(oldPath, newPath);
         return newPath;
     }
@@ -100,10 +130,12 @@ public class FileHandler
     // Deletes a climb, both from file and from the cache
     public static void RemoveClimb(ClimbData climb)
     {
-        if (climb.video != null)
+        try
         {
             File.Delete(climb.video);
         }
+        catch { };
+
         File.Delete(ClimbPath(climb));
         Debug.Log(ClimbPath(climb) + " deleted.");
         PersistentInfo.Climbs.Remove(climb);

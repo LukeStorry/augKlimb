@@ -10,6 +10,7 @@ public class DataScroller : MonoBehaviour
 
     void Start()
     {
+
         gameObject.transform.Find("Back Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene(0); });
         scrollContent.transform.Find("DataItem").gameObject.SetActive(false);
 

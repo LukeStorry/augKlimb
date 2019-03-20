@@ -24,7 +24,6 @@ namespace GracesGames.SimpleFileBrowser.Scripts
         private void LaunchFileBrowser()
         {
             GameObject fileBrowserObject = Instantiate(FileBrowserPrefab, transform);
-            //fileBrowserObject.name = "FileBrowser";
             FileBrowser fileBrowserScript = fileBrowserObject.GetComponent<FileBrowser>();
             fileBrowserScript.SetupFileBrowser(ViewMode.Portrait);
             fileBrowserScript.OpenFilePanel(new string[] { "txt", "mp4", "mov" });
