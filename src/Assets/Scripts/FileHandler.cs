@@ -61,7 +61,7 @@ public class FileHandler
                 if (climb.TryAttachingVideo(file.FullName, CalcVidTime(file.FullName)))
                     Debug.Log("Climb matched with" + climb.video);
             }
-            if (climb.video == null)
+            if (climb.video == "")
                 Debug.Log("No match found");
         }
         Debug.Log("Climb Loaded: " + climb.accelerometer.Count + " datapoints, from file:  " + filepath);
@@ -130,7 +130,10 @@ public class FileHandler
         {
             File.Delete(climb.video);
         }
-        catch { };
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+        };
 
         File.Delete(ClimbPath(climb));
         Debug.Log(ClimbPath(climb) + " deleted.");
