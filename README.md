@@ -1,4 +1,4 @@
-### Bouldering app developed as part of my CS Masters thesis.
+### Bouldering app developed as part of my CS Masters dissertation.
 
 ---
 
