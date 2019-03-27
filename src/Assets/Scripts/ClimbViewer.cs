@@ -13,6 +13,7 @@ public class ClimbViewer : MonoBehaviour
     private ScrollRect scrollBar;
     private float graphWidth;
     private int vidFramesOffset;
+    private bool videoFrameSelectorMode = false;
 
     void Start()
     {
@@ -22,8 +23,10 @@ public class ClimbViewer : MonoBehaviour
         gameObject.transform.Find("Share Button").GetComponent<Button>().onClick.AddListener(Share);
         gameObject.transform.Find("Crop Button").GetComponent<Button>().onClick.AddListener(Crop);
         gameObject.transform.Find("Bin Button").GetComponent<Button>().onClick.AddListener(Delete);
+        gameObject.transform.Find("Video Button").GetComponent<Button>().onClick.AddListener(delegate { videoFrameSelectorMode = false; });
 
         scrollView = gameObject.transform.Find("Scroll View").gameObject;
+        scrollView.GetComponent<Button>().onClick.AddListener(delegate { videoFrameSelectorMode = true; });
         scrollBar = scrollView.GetComponent<ScrollRect>();
         Transform scrollContent = scrollView.transform.Find("Viewport").transform.Find("Content");
         graphContainer = scrollContent.Find("GraphContainer").gameObject;
@@ -35,9 +38,8 @@ public class ClimbViewer : MonoBehaviour
             Debug.Log("Preparing video: " + climb.video);
             graphHeight *= 0.4f;
             vidPlayer = gameObject.transform.Find("Video").GetComponent<VideoPlayer>();
-            vidPlayer.url = climb.video;
+            vidPlayer.url = climb.video; //"https://www.quirksmode.org/html5/videos/big_buck_bunny.mp4";
             vidFramesOffset = (int)(climb.videoOffset * vidPlayer.frameRate);
-            vidPlayer.Prepare();
         }
 
         graphWidth = 100f * climb.TimeTaken;
@@ -54,18 +56,25 @@ public class ClimbViewer : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
             SceneManager.LoadScene(PersistentInfo.previousScene);
 
-        marker.localPosition = new Vector2(graphWidth * scrollBar.horizontalNormalizedPosition + 10, 0);
-        
-
-        if (vidPlayer != null && vidPlayer.isPrepared)
+        if (vidPlayer != null)
         {
-            if (!vidPlayer.isPlaying)  vidPlayer.Play();
-            
-            long frame = vidFramesOffset + (long)(vidPlayer.frameRate * climb.TimeTaken * scrollBar.horizontalNormalizedPosition);
-            vidPlayer.frame = (long) Mathf.Clamp(frame, 0, vidPlayer.frameCount);
+            //vidPlayer.frame += 1;
+            if (videoFrameSelectorMode)
+            {
+                long selectedFrame = vidFramesOffset + (long)(vidPlayer.frameRate * climb.TimeTaken * scrollBar.horizontalNormalizedPosition);
+                if (vidPlayer.frame - selectedFrame > 2)
+                    vidPlayer.frame = (long)Mathf.Clamp(selectedFrame, 1, vidPlayer.frameCount);
+                //vidPlayer.frame = selectedFrame;
 
-            Debug.Log(frame + "/" + vidPlayer.frameCount + "  :  " + vidPlayer.frame);
+            }
+            else
+            {
+                float scrollPos = (vidPlayer.frame - vidFramesOffset) / (vidPlayer.frameRate * climb.TimeTaken);
+                scrollBar.horizontalNormalizedPosition = Mathf.Clamp(scrollPos, 0f, 1f);
+            }
         }
+
+        marker.localPosition = new Vector2(graphWidth * scrollBar.horizontalNormalizedPosition + 10, 0);
 
     }
 
