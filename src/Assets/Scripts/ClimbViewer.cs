@@ -31,10 +31,12 @@ public class ClimbViewer : MonoBehaviour
         float graphHeight = graphContainer.GetComponent<RectTransform>().rect.height;
         if (climb.video != "")
         {
+            Debug.Log("Preparing video: " + climb.video);
             graphHeight *= 0.4f;
             vidPlayer = gameObject.transform.Find("Video").GetComponent<VideoPlayer>();
             vidPlayer.url = climb.video;
             vidFramesOffset = (int)(climb.videoOffset * vidPlayer.frameRate);
+            vidPlayer.Prepare();
         }
 
         graphWidth = 100f * climb.TimeTaken;
@@ -53,8 +55,19 @@ public class ClimbViewer : MonoBehaviour
 
         marker.localPosition = new Vector2(graphWidth * scrollBar.horizontalNormalizedPosition + 10, 0);
 
-        if (vidPlayer != null)
-            vidPlayer.frame = vidFramesOffset + (long)(vidPlayer.frameRate * climb.TimeTaken * scrollBar.horizontalNormalizedPosition);
+        Debug.Log("Prepared status: " + vidPlayer.isPrepared);
+
+
+        if (vidPlayer != null && vidPlayer.isPrepared)
+        {
+            if (!vidPlayer.isPlaying)  vidPlayer.Play();
+            
+            long frame = vidFramesOffset + (long)(vidPlayer.frameRate * climb.TimeTaken * scrollBar.horizontalNormalizedPosition);
+            //vidPlayer.frame = (long) Mathf.Clamp(frame, 0, vidPlayer.frameCount);
+
+            Debug.Log(frame + "/" + vidPlayer.frameCount + "  :  " + vidPlayer.frame);
+        }
+
     }
 
     void Delete()

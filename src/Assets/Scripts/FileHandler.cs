@@ -7,7 +7,7 @@ using System.Globalization;
 public class FileHandler
 {
     public static string climbsFolder = Path.Combine(Application.persistentDataPath, "climbs");
-    public static string vidsFolder = Path.Combine(Application.persistentDataPath, "vids");
+    public static string vidsFolder = Path.Combine(Application.persistentDataPath, "videos");
     private static string vidDateFormat = "yyyyMMdd_HHmmssfff";
 
     // Calculates a timestamped filepath for a climb
@@ -100,11 +100,11 @@ public class FileHandler
     public static string ImportVideo(string oldPath)
     {
         DateTime vidTime = CalcVidTime(oldPath);
-        string internalPath = CopyVideo(oldPath, vidTime);
+        string filepath = CopyVideo(oldPath, vidTime);
 
         foreach (ClimbData climb in PersistentInfo.Climbs)
         {
-            if (climb.TryAttachingVideo(internalPath, vidTime))
+            if (climb.TryAttachingVideo(filepath, vidTime))
             {
                 SaveClimb(climb);
                 Debug.Log(vidTime.ToString("F", null) + " matched with climb: " + climb.Date.ToString("F", null));
@@ -120,11 +120,16 @@ public class FileHandler
     public static string CopyVideo(string oldPath, DateTime time)
     {
         if (!Directory.Exists(vidsFolder)) Directory.CreateDirectory(vidsFolder);
-        string filename = "vid_" + time.ToString(vidDateFormat) + Path.GetExtension(oldPath);
+
+        string filename = time.ToString(vidDateFormat) + Path.GetExtension(oldPath);
         string newPath = Path.Combine(vidsFolder, filename);
+
         File.Copy(oldPath, newPath);
+        Debug.Log("Copied video: " + oldPath + " to " + newPath);
+    
         return newPath;
     }
+
 
     // Deletes a climb, both from file and from the cache
     public static void RemoveClimb(ClimbData climb)
