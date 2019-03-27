@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.Video;
+using System.IO;
 
 public class ClimbViewer : MonoBehaviour
 {
@@ -29,7 +30,7 @@ public class ClimbViewer : MonoBehaviour
         marker = scrollContent.Find("Marker").GetComponent<RectTransform>();
 
         float graphHeight = graphContainer.GetComponent<RectTransform>().rect.height;
-        if (climb.video != "")
+        if (File.Exists(climb.video))
         {
             Debug.Log("Preparing video: " + climb.video);
             graphHeight *= 0.4f;
@@ -51,19 +52,17 @@ public class ClimbViewer : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
-            SceneManager.LoadScene("ViewAllData");
+            SceneManager.LoadScene(PersistentInfo.previousScene);
 
         marker.localPosition = new Vector2(graphWidth * scrollBar.horizontalNormalizedPosition + 10, 0);
-
-        Debug.Log("Prepared status: " + vidPlayer.isPrepared);
-
+        
 
         if (vidPlayer != null && vidPlayer.isPrepared)
         {
             if (!vidPlayer.isPlaying)  vidPlayer.Play();
             
             long frame = vidFramesOffset + (long)(vidPlayer.frameRate * climb.TimeTaken * scrollBar.horizontalNormalizedPosition);
-            //vidPlayer.frame = (long) Mathf.Clamp(frame, 0, vidPlayer.frameCount);
+            vidPlayer.frame = (long) Mathf.Clamp(frame, 0, vidPlayer.frameCount);
 
             Debug.Log(frame + "/" + vidPlayer.frameCount + "  :  " + vidPlayer.frame);
         }
@@ -78,7 +77,7 @@ public class ClimbViewer : MonoBehaviour
         confirmationDialog.transform.Find("Yes Button").gameObject.GetComponent<Button>().onClick.AddListener(delegate
         {
             FileHandler.RemoveClimb(climb);
-            SceneManager.LoadScene("ViewAllData");
+            SceneManager.LoadScene(PersistentInfo.previousScene);
         });
     }
 

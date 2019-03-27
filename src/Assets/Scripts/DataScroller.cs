@@ -10,6 +10,7 @@ public class DataScroller : MonoBehaviour
 
     void Start()
     {
+        PersistentInfo.previousScene = SceneManager.GetActiveScene().name;
         scrollContent.transform.Find("DataItem").gameObject.SetActive(false);
 
         foreach (ClimbData climb in PersistentInfo.Climbs)

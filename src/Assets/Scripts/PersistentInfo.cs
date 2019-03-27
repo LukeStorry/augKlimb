@@ -2,6 +2,7 @@
 
 public static class PersistentInfo
 {
+    public static string previousScene = "MainMenu";
     public static List<ClimbData> _climbs;
     public static ClimbData _currentClimb;
 

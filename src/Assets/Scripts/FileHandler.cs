@@ -123,7 +123,6 @@ public class FileHandler
 
         string filename = time.ToString(vidDateFormat) + Path.GetExtension(oldPath);
         string newPath = Path.Combine(vidsFolder, filename);
-
         File.Copy(oldPath, newPath);
         Debug.Log("Copied video: " + oldPath + " to " + newPath);
     
