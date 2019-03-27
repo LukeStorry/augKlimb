@@ -27,12 +27,12 @@
     </activity>
     <provider
       android:name="com.yasirkula.unity.UnitySSContentProvider"
-      android:authorities="AUGKLIMB"
+      android:authorities="AUGKLIMBshare"
       android:exported="false"
       android:grantUriPermissions="true" />
     <provider
       android:name="com.yasirkula.unity.NativeCameraContentProvider"
-      android:authorities="AUGKLIMB"
+      android:authorities="AUGKLIMBvideo"
       android:exported="false"
       android:grantUriPermissions="true" />
   </application>
