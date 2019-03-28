@@ -145,7 +145,7 @@ PlayerSettings:
   applicationIdentifier:
     Android: com.lukestorry.augKlimb
   buildNumber: {}
-  AndroidBundleVersionCode: 9
+  AndroidBundleVersionCode: 10
   AndroidMinSdkVersion: 23
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
@@ -219,8 +219,8 @@ PlayerSettings:
   AndroidTargetDevice: 0
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: 
-  AndroidKeyaliasName: 
+  AndroidKeystoreName: C:/Users/Luke/Documents/GitHub/augKlimb/src/publish.keystore
+  AndroidKeyaliasName: publish
   AndroidTVCompatibility: 0
   AndroidIsGame: 0
   androidEnableBanner: 0
