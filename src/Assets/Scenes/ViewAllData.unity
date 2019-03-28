@@ -849,6 +849,7 @@ GameObject:
   - component: {fileID: 1987238685}
   - component: {fileID: 1987238684}
   - component: {fileID: 1987238688}
+  - component: {fileID: 1987238689}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -947,6 +948,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scrollContent: {fileID: 790364918}
   dataItem: {fileID: 1898387452617000, guid: 003e6efa8589ea048a6225282efcf0c9, type: 2}
+--- !u!114 &1987238689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1987238683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13d57ae3f6a9e5147be4647344113db1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  importButton: {fileID: 1993735080}
+  fileBrowserPrefab: {fileID: 1760643962491650, guid: 4599b5ba3543545db92bb18160cea721,
+    type: 2}
+  confirmationBoxPrefab: {fileID: 1066639312455830, guid: 548a94f5d2e6e0b40806e03d73e3426a,
+    type: 2}
+  filetypes:
+  - txt
 --- !u!1 &1993735078
 GameObject:
   m_ObjectHideFlags: 0
@@ -957,7 +976,6 @@ GameObject:
   - component: {fileID: 1993735079}
   - component: {fileID: 1993735082}
   - component: {fileID: 1993735081}
-  - component: {fileID: 1993735083}
   - component: {fileID: 1993735080}
   m_Layer: 5
   m_Name: Import Button
@@ -1064,19 +1082,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1993735078}
---- !u!114 &1993735083
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1993735078}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13d57ae3f6a9e5147be4647344113db1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  FileBrowserPrefab: {fileID: 1760643962491650, guid: 4599b5ba3543545db92bb18160cea721,
-    type: 2}
 --- !u!1 &2118583896
 GameObject:
   m_ObjectHideFlags: 0
