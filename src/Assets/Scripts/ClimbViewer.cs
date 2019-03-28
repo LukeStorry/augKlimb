@@ -18,8 +18,14 @@ public class ClimbViewer : MonoBehaviour
     void Start()
     {
         climb = PersistentInfo.CurrentClimb;
-        gameObject.transform.Find("Title").GetComponent<Text>().text = climb.Date.ToString("F", null);
-        gameObject.transform.Find("Details").GetComponent<Text>().text = climb.InfoText.Replace("\n", ", ");
+
+        gameObject.transform.Find("Title").GetComponent<InputField>().text = climb.Title;
+        gameObject.transform.Find("Title").GetComponent<InputField>().onEndEdit.AddListener(input =>
+        {
+            gameObject.transform.Find("Info - clicktoedit").gameObject.SetActive(false);
+            climb.Title = input;
+        });
+        gameObject.transform.Find("Details").GetComponent<Text>().text = climb.Details;
         gameObject.transform.Find("Share Button").GetComponent<Button>().onClick.AddListener(Share);
         gameObject.transform.Find("Crop Button").GetComponent<Button>().onClick.AddListener(Crop);
         gameObject.transform.Find("Bin Button").GetComponent<Button>().onClick.AddListener(Delete);
@@ -76,7 +82,7 @@ public class ClimbViewer : MonoBehaviour
             //        float scrollPos = (vidPlayer.frame - vidFramesOffset) / (vidPlayer.frameRate * climb.TimeTaken);
             //        scrollBar.horizontalNormalizedPosition = Mathf.Clamp(scrollPos, 0f, 1f);
             //    }
-            
+
             if (videoFrameSelectorMode)
             {
                 long selectedFrame = vidFramesOffset + (long)(vidPlayer.frameRate * climb.TimeTaken * scrollBar.horizontalNormalizedPosition);
@@ -89,25 +95,40 @@ public class ClimbViewer : MonoBehaviour
                 float scrollPos = (vidPlayer.frame - vidFramesOffset) / (vidPlayer.frameRate * climb.TimeTaken);
                 scrollBar.horizontalNormalizedPosition = Mathf.Clamp(scrollPos, 0f, 1f);
             }
-    }
+        }
 
 
         marker.localPosition = new Vector2(graphWidth * scrollBar.horizontalNormalizedPosition + 10, 0);
 
     }
 
-    void Delete()
+    void EditTitle()
     {
+        float scrollPosition = gameObject.transform.Find("Scroll View").GetComponent<ScrollRect>().horizontalNormalizedPosition;
+
         GameObject confirmationDialog = Instantiate(Resources.Load("Confimation Box") as GameObject, gameObject.transform);
-        confirmationDialog.transform.Find("Message").gameObject.GetComponent<Text>().text = "Are you sure you want to delete this climb?";
-        confirmationDialog.transform.Find("No Button").gameObject.GetComponent<Button>().onClick.AddListener(delegate { Destroy(confirmationDialog); });
+        string message = System.String.Format("Are you sure you want to delete all climb data after {0:0.0} seconds?", scrollPosition * climb.TimeTaken);
+        confirmationDialog.transform.Find("Message").gameObject.GetComponent<Text>().text = message;
+        confirmationDialog.transform.Find("No Button").gameObject.GetComponent<Button>().onClick.AddListener(delegate
+        {
+            Destroy(confirmationDialog);
+        });
         confirmationDialog.transform.Find("Yes Button").gameObject.GetComponent<Button>().onClick.AddListener(delegate
         {
-            FileHandler.RemoveClimb(climb);
-            SceneManager.LoadScene(PersistentInfo.previousScene);
+            climb.Crop(scrollPosition);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         });
     }
 
+
+    void Share()
+    {
+        string platform = Application.platform.ToString();
+        string filepath = FileHandler.ClimbPath(climb);
+
+        if (platform.Contains("Windows")) Application.OpenURL(filepath);
+        else new NativeShare().AddFile(filepath).Share();
+    }
 
     void Crop()
     {
@@ -127,14 +148,18 @@ public class ClimbViewer : MonoBehaviour
         });
     }
 
-    void Share()
+    void Delete()
     {
-        string platform = Application.platform.ToString();
-        string filepath = FileHandler.ClimbPath(climb);
-
-        if (platform.Contains("Windows")) Application.OpenURL(filepath);
-        else new NativeShare().AddFile(filepath).Share();
+        GameObject confirmationDialog = Instantiate(Resources.Load("Confimation Box") as GameObject, gameObject.transform);
+        confirmationDialog.transform.Find("Message").gameObject.GetComponent<Text>().text = "Are you sure you want to delete this climb?";
+        confirmationDialog.transform.Find("No Button").gameObject.GetComponent<Button>().onClick.AddListener(delegate { Destroy(confirmationDialog); });
+        confirmationDialog.transform.Find("Yes Button").gameObject.GetComponent<Button>().onClick.AddListener(delegate
+        {
+            FileHandler.RemoveClimb(climb);
+            SceneManager.LoadScene(PersistentInfo.previousScene);
+        });
     }
+
 }
 
 

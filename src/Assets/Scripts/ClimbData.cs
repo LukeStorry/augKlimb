@@ -5,7 +5,15 @@ using UnityEngine;
 [Serializable]
 public class ClimbData
 {
-    public float smoothness;
+    [SerializeField]
+    private string _title = "";
+    [SerializeField]
+    private float avgAcceleration;
+    [SerializeField]
+    private float maxAcceleration;
+    [SerializeField]
+    private float smoothness;
+
     public string video = "";
     public float videoOffset; //seconds
     public List<DataPoint> accelerometer;
@@ -19,50 +27,98 @@ public class ClimbData
     {
         get { return new DateTime(accelerometer[0].time); }
     }
-    public string InfoText
+
+    // accessor to 
+    public string Title
     {
-        get { return "Time: " + TimeTaken.ToString("#0.0") + "\n Smoothness: " + smoothness.ToString("#0.0"); }
+        get
+        {
+            if (_title == "")
+                return Date.ToString("ddd dd/MM HH:mm");
+            else
+                return _title;
+        }
+        set {
+            _title = value;
+            FileHandler.SaveClimb(this);
+        }
+    }
+
+    public string Info
+    {
+        get
+        {
+            if (_title == "") return "";
+            else return Date.ToString("dddd dd/MM/yyyy HH:mm.ss");
+        }
+    }
+
+
+    public string Details
+    {
+        get
+        {
+            string output = "";
+
+            if (_title != "")
+                output += Date.ToString("dddd dd/MM/yyyy HH:mm:ss");
+
+            output += "Time Taken: " + TimeTaken.ToString("#0.0");
+            output += "\nAverage Acceleration: " + avgAcceleration.ToString("#0.0");
+            output += "\nMax Acceleration: " + maxAcceleration.ToString("#0.0");
+            output += "\nSmoothness: " + smoothness.ToString("#0.0");
+
+            return output;
+        }
     }
 
     public ClimbData(List<DataPoint> accelerometer)
     {
         this.accelerometer = accelerometer;
-        this.smoothness = CalcSmoothness(accelerometer);
+        CalculateAnalytics();
         Debug.Log("ClimbData Created");
     }
 
-
-    // Removes data after the cut-off point, given as 0-1
-    public void Crop(float cut)
+    // calculate and cache the analytics for this climb
+    private void CalculateAnalytics()
     {
-        Debug.Log("Cropping climb at " + cut.ToString());
-        float newLength = cut * accelerometer.Count;
-        accelerometer = accelerometer.GetRange(0, (int)newLength);
-        smoothness = CalcSmoothness(accelerometer);
-        FileHandler.SaveClimb(this);
+        avgAcceleration = CalcAverageAcceleration();
+        maxAcceleration = CalcMaxAcceleration();
+        smoothness = CalcSmoothness();
     }
 
-
-    private static float CalcSmoothness(List<DataPoint> data)
+    private float CalcAverageAcceleration()
     {
-        float avg = 0;
+        float sum = 0;
         int count = 0;
-        foreach (DataPoint n in data)
+        foreach (DataPoint n in accelerometer)
         {
-            avg += n.acc;
+            sum += n.acc;
             count += 1;
         }
-        avg /= count;
+        return sum / count;
+    }
 
-        float totalSquaredDiff = 0;
-        foreach (DataPoint n in data)
+    private float CalcMaxAcceleration()
+    {
+        float max = float.MinValue;
+        foreach (DataPoint dataPoint in accelerometer)
         {
-            totalSquaredDiff += Mathf.Pow(n.acc - avg, 2);
+            max = (dataPoint.acc > max) ? dataPoint.acc : max;
+        }
+        return max;
+    }
+
+    private float CalcSmoothness()
+    {
+        float totalSquaredDiff = 0;
+        foreach (DataPoint n in accelerometer)
+        {
+            totalSquaredDiff += Mathf.Pow(n.acc - avgAcceleration, 2);
         }
         Debug.Log("Smoothness Calculated: " + totalSquaredDiff.ToString("0.000"));
         return totalSquaredDiff;
     }
-
 
     public bool TryAttachingVideo(string vidPath, DateTime vidTime)
     {
@@ -76,6 +132,16 @@ public class ClimbData
         }
         return false;
 
+    }
+
+    // Removes data after the cut-off point, given as 0-1
+    public void Crop(float cut)
+    {
+        Debug.Log("Cropping climb at " + cut.ToString());
+        float newLength = cut * accelerometer.Count;
+        accelerometer = accelerometer.GetRange(0, (int)newLength);
+        CalculateAnalytics();
+        FileHandler.SaveClimb(this);
     }
 }
 

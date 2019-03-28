@@ -61,11 +61,7 @@ public static class GraphDrawer
 
             previous = coord;
         }
-
-        // Add axis labels
-        graphContainer.transform.Find("Min").GetComponent<Text>().text = minAcc.ToString("#0.00");
-        graphContainer.transform.Find("Max").GetComponent<Text>().text = maxAcc.ToString("#0.00");
-
+        
         if (includeSeconds)
         {
             GameObject textBox = Resources.Load("TextBox") as GameObject;

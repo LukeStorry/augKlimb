@@ -29,8 +29,8 @@ public class DataScroller : MonoBehaviour
     {
         GameObject item = Instantiate(dataItem, scrollContent.transform);
 
-        item.transform.Find("Title").GetComponent<Text>().text = climb.Date.ToString("F", null);
-        item.transform.Find("Details").GetComponent<Text>().text = climb.InfoText.Replace("\n", ", ");
+        item.transform.Find("Title").GetComponent<Text>().text = climb.Title;
+        item.transform.Find("Details").GetComponent<Text>().text = climb.Info;
         item.GetComponent<Button>().onClick.AddListener(delegate { SelectClimb(climb); });
         GraphDrawer.Draw(item.transform.Find("GraphContainer").gameObject, climb.accelerometer);
     }
