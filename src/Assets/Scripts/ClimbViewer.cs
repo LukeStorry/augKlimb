@@ -58,12 +58,30 @@ public class ClimbViewer : MonoBehaviour
 
         if (vidPlayer != null)
         {
-            long selectedFrame = vidFramesOffset + (long)(vidPlayer.frameRate * climb.TimeTaken * scrollBar.horizontalNormalizedPosition);
-            selectedFrame = (long)Mathf.Clamp(selectedFrame, 1, vidPlayer.frameCount);
-
+            //    if (Input.touchCount > 0)
+            //    {
+            //        Touch touch = Input.GetTouch(0);
+            //        Debug.Log(touch.phase);
+            //        if (touch.phase != TouchPhase.Ended)
+            //        {
+            //            long selectedFrame = vidFramesOffset + (long)(vidPlayer.frameRate * climb.TimeTaken * scrollBar.horizontalNormalizedPosition);
+            //            selectedFrame = (long)Mathf.Clamp(selectedFrame, 1, vidPlayer.frameCount);
+            //            if (Mathf.Abs(vidPlayer.frame - selectedFrame) > 1)
+            //                vidPlayer.frame = selectedFrame;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        // no touches, scroll the bar to the video
+            //        float scrollPos = (vidPlayer.frame - vidFramesOffset) / (vidPlayer.frameRate * climb.TimeTaken);
+            //        scrollBar.horizontalNormalizedPosition = Mathf.Clamp(scrollPos, 0f, 1f);
+            //    }
+            
             if (videoFrameSelectorMode)
             {
-                if (Mathf.Abs(vidPlayer.frame - selectedFrame) > 0)
+                long selectedFrame = vidFramesOffset + (long)(vidPlayer.frameRate * climb.TimeTaken * scrollBar.horizontalNormalizedPosition);
+                selectedFrame = (long)Mathf.Clamp(selectedFrame, 1, vidPlayer.frameCount);
+                if (Mathf.Abs(vidPlayer.frame - selectedFrame) > 1)
                     vidPlayer.frame = selectedFrame;
             }
             else
@@ -71,7 +89,8 @@ public class ClimbViewer : MonoBehaviour
                 float scrollPos = (vidPlayer.frame - vidFramesOffset) / (vidPlayer.frameRate * climb.TimeTaken);
                 scrollBar.horizontalNormalizedPosition = Mathf.Clamp(scrollPos, 0f, 1f);
             }
-        }
+    }
+
 
         marker.localPosition = new Vector2(graphWidth * scrollBar.horizontalNormalizedPosition + 10, 0);
 

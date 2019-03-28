@@ -85,7 +85,7 @@ public class FileHandler
             return result;
         }
 
-        string[] dateFormats = { "yyyyMMdd_HHmmss", "yyyyMMdd_HHmmssfff" };
+        string[] dateFormats = { "yyyyMMdd_HHmmss", "yyyyMMdd_HHmmssfff", "yyyyMMdd_HHmmss_fff" };
         if (DateTime.TryParseExact(dateString, dateFormats, null, DateTimeStyles.None, out result))
         {
             Debug.Log("Exact-parsed Video Filename: " + result);
