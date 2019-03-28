@@ -119,20 +119,7 @@ public class ClimbData
         Debug.Log("Smoothness Calculated: " + totalSquaredDiff.ToString("0.000"));
         return totalSquaredDiff;
     }
-
-    public bool TryAttachingVideo(string vidPath, DateTime vidTime)
-    {
-        float timeDifference = (float)Date.Subtract(vidTime).TotalMilliseconds / 1000;
-        Debug.Log("timediff:" + timeDifference);
-        if (-timeDifference < TimeTaken)
-        {
-            video = vidPath;
-            videoOffset = timeDifference;
-            return true;
-        }
-        return false;
-
-    }
+ 
 
     // Removes data after the cut-off point, given as 0-1
     public void Crop(float cut)

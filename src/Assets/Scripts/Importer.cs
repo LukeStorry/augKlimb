@@ -11,22 +11,22 @@ namespace GracesGames.SimpleFileBrowser.Scripts
 
     public class Importer : MonoBehaviour
     {
-        public GameObject FileBrowserPrefab;
-        private string originalText;
+        public Button importButton;
+        public GameObject fileBrowserPrefab, confirmationBoxPrefab;
+        public string[] filetypes = new string[] { "txt", "mp4", "mov" };
 
         void Start()
         {
-            originalText = gameObject.GetComponent<Text>().text;
-            gameObject.GetComponent<Button>().onClick.AddListener(LaunchFileBrowser);
+            importButton.onClick.AddListener(LaunchFileBrowser);
         }
 
         // launches a platform-specific file browser and returns the path of the selected file
         private void LaunchFileBrowser()
         {
-            GameObject fileBrowserObject = Instantiate(FileBrowserPrefab, transform);
+            GameObject fileBrowserObject = Instantiate(fileBrowserPrefab, transform);
             FileBrowser fileBrowserScript = fileBrowserObject.GetComponent<FileBrowser>();
             fileBrowserScript.SetupFileBrowser(ViewMode.Portrait);
-            fileBrowserScript.OpenFilePanel(new string[] { "txt", "mp4", "mov" });
+            fileBrowserScript.OpenFilePanel(filetypes);
             fileBrowserScript.OnFileSelect += TryImportFile;  // subscribes to event (calls using path) 
         }
 
@@ -36,28 +36,31 @@ namespace GracesGames.SimpleFileBrowser.Scripts
             try
             {
                 if (Path.GetExtension(path) == ".txt")
-                {
-                    ClimbData climb = FileHandler.LoadClimb(path, tryMatch: true);
-                    FileHandler.SaveClimb(climb);
-                    SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-                }
+                    FileHandler.LoadClimb(path, copy: true);
                 else
-                {
-                    gameObject.GetComponent<Text>().text =  FileHandler.ImportVideo(path);
-                }
+                    FileHandler.ImportVideo(path);
+
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             }
             catch (Exception e)
             {
                 Debug.Log(e.Message);
-                gameObject.GetComponent<Text>().text =  e.Message;
+                DisplayText(e.Message);
             }
-            StartCoroutine(ResetText());
         }
 
-        private IEnumerator ResetText()
+
+        private void DisplayText(string text)
         {
-            yield return new WaitForSeconds(5);
-            gameObject.GetComponent<Text>().text = originalText;
+            GameObject confirmationDialog = Instantiate(confirmationBoxPrefab, gameObject.transform);
+            confirmationDialog.transform.Find("Message").gameObject.GetComponent<Text>().text = text;
+            confirmationDialog.transform.Find("No Button").gameObject.GetComponent<Text>().text = "ok";
+            confirmationDialog.transform.Find("No Button").gameObject.GetComponent<Button>().onClick.AddListener(delegate
+            {
+                Destroy(confirmationDialog);
+            });
+            confirmationDialog.transform.Find("Yes Button").gameObject.SetActive(false);
         }
+
     }
 }

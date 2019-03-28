@@ -24,7 +24,9 @@ public class FileHandler
         string jsonString = JsonUtility.ToJson(climb);
         File.WriteAllText(ClimbPath(climb), jsonString);
         Debug.Log(ClimbPath(climb) + " written.");
-        if (!PersistentInfo.Climbs.Contains(climb)) PersistentInfo.Climbs.Insert(0, climb);
+
+        if (!PersistentInfo.Climbs.Exists(x => (x.Title == climb.Title && x.TimeTaken == climb.TimeTaken)))
+            PersistentInfo.Climbs.Insert(0, climb);
     }
 
 
@@ -47,24 +49,19 @@ public class FileHandler
     }
 
 
-    // Loads & returns a single climb given a filepath Throws an exception if the unSerialization fails.
-    public static ClimbData LoadClimb(string filepath, bool tryMatch = false)
+    // Loads & returns a single climb given a filepath Throws an exception if the unSerialization fails. copy parameter also saves to app's storage
+    public static ClimbData LoadClimb(string filepath, bool copy = false)
     {
         string fileContents = File.ReadAllText(filepath);
         ClimbData climb = JsonUtility.FromJson<ClimbData>(fileContents);
 
         if (climb == null) throw new Exception("Climb File not Valid.");
-        if (tryMatch && Directory.Exists(vidsFolder))
-        {
-            foreach (FileInfo file in new DirectoryInfo(vidsFolder).GetFiles("*"))
-            {
-                if (climb.TryAttachingVideo(file.FullName, CalcVidTime(file.FullName)))
-                    Debug.Log("Climb matched with" + climb.video);
-            }
-            if (climb.video == "")
-                Debug.Log("No match found");
-        }
+
         Debug.Log("Climb Loaded: " + climb.accelerometer.Count + " datapoints, from file:  " + filepath);
+
+        if (copy)
+            SaveClimb(climb);
+
         return climb;
     }
 
@@ -97,22 +94,14 @@ public class FileHandler
 
 
     // Attempts to match a video file to a climb file, then either attaches a copy or throws exception.
-    public static string ImportVideo(string oldPath)
+    public static void ImportVideo(string oldPath)
     {
         DateTime vidTime = CalcVidTime(oldPath);
-        string filepath = CopyVideo(oldPath, vidTime);
+        string vidFilepath = CopyVideo(oldPath, vidTime);
+        ClimbData climb = PersistentInfo.CurrentClimb;
 
-        foreach (ClimbData climb in PersistentInfo.Climbs)
-        {
-            if (climb.TryAttachingVideo(filepath, vidTime))
-            {
-                SaveClimb(climb);
-                Debug.Log(vidTime.ToString("F", null) + " matched with climb: " + climb.Date.ToString("F", null));
-                return "Matched with climb: " + climb.Date.ToString("F", null);
-            }
-        }
-
-        return "Couldn't find a matching climb for " + vidTime.ToString("F", null);
+        climb.video = vidFilepath;
+        SaveClimb(climb);
     }
 
 
@@ -123,9 +112,9 @@ public class FileHandler
 
         string filename = time.ToString(vidDateFormat) + Path.GetExtension(oldPath);
         string newPath = Path.Combine(vidsFolder, filename);
-        File.Copy(oldPath, newPath);
+        File.Copy(oldPath, newPath, true);
         Debug.Log("Copied video: " + oldPath + " to " + newPath);
-    
+
         return newPath;
     }
 
