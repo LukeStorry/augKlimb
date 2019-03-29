@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.Video;
 using System.IO;
+using System.Collections;
 
 public class ClimbViewer : MonoBehaviour
 {
@@ -21,8 +22,11 @@ public class ClimbViewer : MonoBehaviour
         gameObject.transform.Find("Title").GetComponent<InputField>().text = climb.Title;
         gameObject.transform.Find("Details").GetComponent<Text>().text = climb.Details;
         gameObject.transform.Find("Share Button").GetComponent<Button>().onClick.AddListener(Share);
+        gameObject.transform.Find("Video Overlay Button").GetComponent<Button>().onClick.AddListener(delegate { videoFrameSelectorMode = false; });
 
         scrollView = gameObject.transform.Find("Scroll View").gameObject;
+        scrollView.GetComponent<Button>().onClick.AddListener(delegate { videoFrameSelectorMode = true; });
+
         scrollBar = scrollView.GetComponent<ScrollRect>();
         Transform scrollContent = scrollView.transform.Find("Viewport").transform.Find("Content");
         graphContainer = scrollContent.Find("GraphContainer").gameObject;
@@ -32,16 +36,15 @@ public class ClimbViewer : MonoBehaviour
         if (File.Exists(climb.video))
         {
             graphHeight *= 0.4f;
-            gameObject.transform.Find("Video Overlay Button").GetComponent<Button>().onClick.AddListener(delegate { videoFrameSelectorMode = false; });
-            scrollView.GetComponent<Button>().onClick.AddListener(delegate { videoFrameSelectorMode = true; });
             vidPlayer = gameObject.transform.Find("Video").GetComponent<VideoPlayer>();
-            vidPlayer.url = climb.video; //"https://www.quirksmode.org/html5/videos/big_buck_bunny.mp4";
+            vidPlayer.url = climb.video;
         }
+        else gameObject.transform.Find("Video").gameObject.SetActive(false);
 
         graphWidth = 100f * climb.TimeTaken;
         graphContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(graphWidth, graphHeight);
         scrollContent.GetComponent<RectTransform>().sizeDelta = new Vector2(20 + graphWidth, graphHeight);
-        scrollView.GetComponent<RectTransform>().sizeDelta = new Vector2(-30, graphHeight + 40);
+        scrollView.GetComponent<RectTransform>().sizeDelta = new Vector2(-10, graphHeight + 20);
 
         GraphDrawer.Draw(graphContainer, climb.accelerometer, includeDots: true, includeSeconds: true);
 

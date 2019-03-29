@@ -713,7 +713,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 10}
-  m_SizeDelta: {x: -40, y: 680}
+  m_SizeDelta: {x: -20, y: 680}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &709422635
 MonoBehaviour:
@@ -830,6 +830,7 @@ GameObject:
   - component: {fileID: 828704667}
   - component: {fileID: 828704668}
   - component: {fileID: 828704670}
+  - component: {fileID: 828704669}
   m_Layer: 0
   m_Name: Video
   m_TagString: Untagged
@@ -850,10 +851,10 @@ RectTransform:
   m_Father: {fileID: 1987238687}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 13.379}
-  m_SizeDelta: {x: -40, y: -573.24}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -510}
+  m_SizeDelta: {x: 600, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!328 &828704668
 VideoPlayer:
@@ -865,11 +866,11 @@ VideoPlayer:
   m_VideoClip: {fileID: 0}
   m_TargetCameraAlpha: 1
   m_TargetCamera: {fileID: 1900725530}
-  m_TargetTexture: {fileID: 0}
+  m_TargetTexture: {fileID: 8400000, guid: 0a62f15655a478744b75196f659a456a, type: 2}
   m_TimeReference: 0
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: _MainTex
-  m_RenderMode: 1
+  m_RenderMode: 2
   m_AspectRatio: 3
   m_DataSource: 1
   m_PlaybackSpeed: 1
@@ -887,6 +888,32 @@ VideoPlayer:
   m_Looping: 1
   m_WaitForFirstFrame: 1
   m_FrameReadyEventEnabled: 0
+--- !u!114 &828704669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 828704666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -98529514, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_Texture: {fileID: 8400000, guid: 0a62f15655a478744b75196f659a456a, type: 2}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
 --- !u!222 &828704670
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1085,7 +1112,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2015440304}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.49165347
+  m_Size: 0.5517883
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1885,7 +1912,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.25882354, g: 0.8039216, b: 0.9372549, a: 0.78431374}
+  m_Color: {r: 0.25882354, g: 0.8039216, b: 0.9372549, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:

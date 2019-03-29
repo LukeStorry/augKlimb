@@ -63,12 +63,12 @@ public class ClimbData
             string output = "";
 
             if (_title != "")
-                output += Date.ToString("dddd dd/MM/yyyy HH:mm:ss");
+                output += Date.ToString("dddd dd/MM/yyyy HH:mm:ss\n");
 
-            output += "Time Taken: " + TimeTaken.ToString("#0.0");
-            output += "\nAverage Acceleration: " + avgAcceleration.ToString("#0.0");
-            output += "\nMax Acceleration: " + maxAcceleration.ToString("#0.0");
-            output += "\nSmoothness: " + smoothness.ToString("#0.0");
+            output += "Time Taken: " + TimeTaken.ToString("#0.0") + "\n";
+            output += "Average Acceleration: " + avgAcceleration.ToString("#0.0") + "\n";
+            output += "Max Acceleration: " + maxAcceleration.ToString("#0.0") + "\n";
+            output += "Smoothness: " + smoothness.ToString("#0.0") + "\n";
 
             return output;
         }
