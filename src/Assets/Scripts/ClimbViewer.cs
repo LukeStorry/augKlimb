@@ -20,6 +20,7 @@ public class ClimbViewer : MonoBehaviour
 
         gameObject.transform.Find("Title").GetComponent<InputField>().text = climb.Title;
         gameObject.transform.Find("Details").GetComponent<Text>().text = climb.Details;
+        gameObject.transform.Find("Share Button").GetComponent<Button>().onClick.AddListener(Share);
 
         scrollView = gameObject.transform.Find("Scroll View").gameObject;
         scrollBar = scrollView.GetComponent<ScrollRect>();
@@ -70,6 +71,16 @@ public class ClimbViewer : MonoBehaviour
         }
 
         marker.localPosition = new Vector2(graphWidth * scrollBar.horizontalNormalizedPosition + 10, 0);
+    }
+
+
+    void Share()
+    {
+        string platform = Application.platform.ToString();
+        string filepath = FileHandler.ClimbPath(climb);
+
+        if (platform.Contains("Windows")) Application.OpenURL(filepath);
+        else new NativeShare().AddFile(filepath).Share();
     }
 }
 

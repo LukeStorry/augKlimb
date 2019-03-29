@@ -23,7 +23,6 @@ public class ClimbEditor : MonoBehaviour
                 gameObject.transform.Find("Info - clicktoedit").gameObject.SetActive(false);
             });
 
-        gameObject.transform.Find("Share Button").GetComponent<Button>().onClick.AddListener(Share);
         gameObject.transform.Find("Crop Button").GetComponent<Button>().onClick.AddListener(Crop);
         gameObject.transform.Find("Bin Button").GetComponent<Button>().onClick.AddListener(Delete);
 
@@ -52,15 +51,6 @@ public class ClimbEditor : MonoBehaviour
             offsetEditorBox.SetActive(false);
         }
 
-    }
-
-    void Share()
-    {
-        string platform = Application.platform.ToString();
-        string filepath = FileHandler.ClimbPath(climb);
-
-        if (platform.Contains("Windows")) Application.OpenURL(filepath);
-        else new NativeShare().AddFile(filepath).Share();
     }
 
     void Crop()
