@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 
 public class ClimbEditor : MonoBehaviour
 {
-    private ClimbData climb;
     public GameObject confirmationBoxPrefab;
+
+    private ClimbData climb;
+    private InputField offsetField;
 
     void Start()
     {
@@ -16,13 +19,38 @@ public class ClimbEditor : MonoBehaviour
 
         gameObject.transform.Find("Title").GetComponent<InputField>().onEndEdit.AddListener(input =>
             {
-                gameObject.transform.Find("Info - clicktoedit").gameObject.SetActive(false);
                 climb.Title = input;
+                gameObject.transform.Find("Info - clicktoedit").gameObject.SetActive(false);
             });
 
         gameObject.transform.Find("Share Button").GetComponent<Button>().onClick.AddListener(Share);
         gameObject.transform.Find("Crop Button").GetComponent<Button>().onClick.AddListener(Crop);
         gameObject.transform.Find("Bin Button").GetComponent<Button>().onClick.AddListener(Delete);
+
+
+        GameObject offsetEditorBox = gameObject.transform.Find("Video Offset Editor").gameObject;
+        if (File.Exists(climb.video))
+        {
+
+            offsetField = offsetEditorBox.transform.Find("Number").GetComponent<InputField>();
+            offsetField.text = climb.VideoOffset.ToString("0.0");
+            offsetField.onEndEdit.AddListener(input => climb.VideoOffset = float.Parse(input));
+
+            offsetEditorBox.transform.Find("Plus Button").GetComponent<Button>().onClick.AddListener(delegate
+            {
+                climb.VideoOffset += 0.1f;
+                offsetField.text = climb.VideoOffset.ToString("0.0");
+            });
+            offsetEditorBox.transform.Find("Minus Button").GetComponent<Button>().onClick.AddListener(delegate
+            {
+                climb.VideoOffset -= 0.1f;
+                offsetField.text = climb.VideoOffset.ToString("0.0");
+            });
+        }
+        else
+        {
+            offsetEditorBox.SetActive(false);
+        }
 
     }
 

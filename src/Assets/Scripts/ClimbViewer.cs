@@ -12,7 +12,6 @@ public class ClimbViewer : MonoBehaviour
     private VideoPlayer vidPlayer;
     private ScrollRect scrollBar;
     private float graphWidth;
-    private int vidFramesOffset;
     private bool videoFrameSelectorMode = false;
 
     void Start()
@@ -32,11 +31,10 @@ public class ClimbViewer : MonoBehaviour
         if (File.Exists(climb.video))
         {
             graphHeight *= 0.4f;
-            gameObject.transform.Find("Video Button").GetComponent<Button>().onClick.AddListener(delegate { videoFrameSelectorMode = false; });
+            gameObject.transform.Find("Video Overlay Button").GetComponent<Button>().onClick.AddListener(delegate { videoFrameSelectorMode = false; });
             scrollView.GetComponent<Button>().onClick.AddListener(delegate { videoFrameSelectorMode = true; });
             vidPlayer = gameObject.transform.Find("Video").GetComponent<VideoPlayer>();
             vidPlayer.url = climb.video; //"https://www.quirksmode.org/html5/videos/big_buck_bunny.mp4";
-            vidFramesOffset = (int)(climb.videoOffset * vidPlayer.frameRate);
         }
 
         graphWidth = 100f * climb.TimeTaken;
@@ -55,6 +53,8 @@ public class ClimbViewer : MonoBehaviour
 
         if (vidPlayer != null)
         {
+            int vidFramesOffset = (int)(climb.VideoOffset * vidPlayer.frameRate);
+
             if (videoFrameSelectorMode)
             {
                 long selectedFrame = vidFramesOffset + (long)(vidPlayer.frameRate * climb.TimeTaken * scrollBar.horizontalNormalizedPosition);

@@ -82,13 +82,9 @@ public class AccelerometerRecorder : MonoBehaviour
         Debug.Log("Stopped");
 
         if (data.Count > 100)
-        {
             SaveAndViewClimb();
-        }
         else
-        {
             timerText.text = "Not enough data recorded, minimum 5 seconds.";
-        }
 
         startButton.GetComponent<Image>().color = buttonReadyColour;
         stopButton.GetComponent<Image>().color = buttonNotReadyColour;
@@ -100,7 +96,7 @@ public class AccelerometerRecorder : MonoBehaviour
     {
         ClimbData climb = new ClimbData(data);
         timerText.text = climb.Details;
-        FileHandler.SaveClimb(climb);
+        FileHandler.SaveClimb(climb, true);
 
         PersistentInfo.previousScene = SceneManager.GetActiveScene().name;
         PersistentInfo.CurrentClimb = climb;

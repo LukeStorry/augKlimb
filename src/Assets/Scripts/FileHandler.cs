@@ -16,8 +16,8 @@ public class FileHandler
         return Path.Combine(climbsFolder, "climb_" + climb.Date.ToString("yyMMdd-HHmmss") + ".txt");
     }
 
-    // Saves the climb, both serialized to file and to the PI cache
-    public static void SaveClimb(ClimbData climb)
+    // Saves the climb serialized to file, and optionally adds to the PI cache if not already there
+    public static void SaveClimb(ClimbData climb, bool addToCache)
     {
         if (!Directory.Exists(climbsFolder)) Directory.CreateDirectory(climbsFolder);
 
@@ -25,8 +25,7 @@ public class FileHandler
         File.WriteAllText(ClimbPath(climb), jsonString);
         Debug.Log(ClimbPath(climb) + " written.");
 
-        if (!PersistentInfo.Climbs.Exists(x => (x.Title == climb.Title && x.TimeTaken == climb.TimeTaken)))
-            PersistentInfo.Climbs.Insert(0, climb);
+        if (addToCache) PersistentInfo.Climbs.Insert(0, climb);
     }
 
 
@@ -41,7 +40,7 @@ public class FileHandler
         {
             try
             {
-                climbs.Add(LoadClimb(file.FullName));
+                climbs.Add(LoadClimb(file.FullName, false));
             }
             catch (Exception e) { Debug.LogException(e); }
         }
@@ -49,7 +48,7 @@ public class FileHandler
     }
 
 
-    // Loads & returns a single climb given a filepath Throws an exception if the unSerialization fails. copy parameter also saves to app's storage
+    // Loads & returns a single climb given a filepath Throws an exception if the unSerialization fails. copy parameter also saves to app's storage&cache
     public static ClimbData LoadClimb(string filepath, bool copy = false)
     {
         string fileContents = File.ReadAllText(filepath);
@@ -60,7 +59,7 @@ public class FileHandler
         Debug.Log("Climb Loaded: " + climb.accelerometer.Count + " datapoints, from file:  " + filepath);
 
         if (copy)
-            SaveClimb(climb);
+            SaveClimb(climb, true);
 
         return climb;
     }
@@ -98,10 +97,11 @@ public class FileHandler
     {
         DateTime vidTime = CalcVidTime(oldPath);
         string vidFilepath = CopyVideo(oldPath, vidTime);
-        ClimbData climb = PersistentInfo.CurrentClimb;
 
+        ClimbData climb = PersistentInfo.CurrentClimb;
         climb.video = vidFilepath;
-        SaveClimb(climb);
+
+        SaveClimb(climb, false);
     }
 
 

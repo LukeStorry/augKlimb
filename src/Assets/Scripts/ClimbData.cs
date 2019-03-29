@@ -14,8 +14,11 @@ public class ClimbData
     [SerializeField]
     private float smoothness;
 
+
     public string video = "";
-    public float videoOffset; //seconds
+    [SerializeField]
+    private float videoOffset = 0; //seconds
+
     public List<DataPoint> accelerometer;
 
     public float TimeTaken
@@ -28,7 +31,6 @@ public class ClimbData
         get { return new DateTime(accelerometer[0].time); }
     }
 
-    // accessor to 
     public string Title
     {
         get
@@ -38,9 +40,10 @@ public class ClimbData
             else
                 return _title;
         }
-        set {
+        set
+        {
             _title = value;
-            FileHandler.SaveClimb(this);
+            FileHandler.SaveClimb(this, false);
         }
     }
 
@@ -52,7 +55,6 @@ public class ClimbData
             else return Date.ToString("dddd dd/MM/yyyy HH:mm.ss");
         }
     }
-
 
     public string Details
     {
@@ -69,6 +71,16 @@ public class ClimbData
             output += "\nSmoothness: " + smoothness.ToString("#0.0");
 
             return output;
+        }
+    }
+
+    public float VideoOffset
+    {
+        get { return videoOffset; }
+        set
+        {
+            videoOffset = value;
+            FileHandler.SaveClimb(this, false);
         }
     }
 
@@ -119,7 +131,7 @@ public class ClimbData
         Debug.Log("Smoothness Calculated: " + totalSquaredDiff.ToString("0.000"));
         return totalSquaredDiff;
     }
- 
+
 
     // Removes data after the cut-off point, given as 0-1
     public void Crop(float cut)
@@ -128,7 +140,7 @@ public class ClimbData
         float newLength = cut * accelerometer.Count;
         accelerometer = accelerometer.GetRange(0, (int)newLength);
         CalculateAnalytics();
-        FileHandler.SaveClimb(this);
+        FileHandler.SaveClimb(this, false);
     }
 }
 
