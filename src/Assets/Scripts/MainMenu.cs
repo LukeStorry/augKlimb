@@ -12,7 +12,7 @@ public class MainMenu : MonoBehaviour
         gameObject.transform.Find("Accelero Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene("AccRecord"); });
         gameObject.transform.Find("Video Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene("Video"); });
         gameObject.transform.Find("ViewData Button").GetComponent<Button>().onClick.AddListener(delegate { SceneManager.LoadScene("ViewAllData"); });
-        gameObject.transform.Find("Question Button").GetComponent<Button>().onClick.AddListener(delegate { Application.OpenURL("mailto:ls14172@bristol.ac.uk?subject=augKlimb Feedback"); });
+        gameObject.transform.Find("Question Button").GetComponent<Button>().onClick.AddListener(delegate { Application.OpenURL("mailto:ls14172@bristol.ac.uk?subject=Feedback: augKlimb v" + Application.version); });
 
         gameObject.transform.Find("About Button").GetComponent<Button>().onClick.AddListener(delegate { Application.OpenURL("https://lukestorry.co.uk/augKlimb/"); });
         gameObject.transform.Find("Feedback Button").GetComponent<Button>().onClick.AddListener(delegate { Application.OpenURL("https://goo.gl/forms/GGdaJq2hBdIhsOKX2"); });
