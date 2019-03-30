@@ -13,7 +13,7 @@ public class ClimbViewer : MonoBehaviour
     private VideoPlayer vidPlayer;
     private ScrollRect scrollBar;
     private float graphWidth;
-    private bool videoFrameSelectorMode = false;
+    private bool videoFrameSelectorMode = true;
 
     void Start()
     {
@@ -33,11 +33,11 @@ public class ClimbViewer : MonoBehaviour
         marker = scrollContent.Find("Marker").GetComponent<RectTransform>();
 
         float graphHeight = graphContainer.GetComponent<RectTransform>().rect.height;
-        if (File.Exists(climb.video))
+        if (File.Exists(climb.VideoPath))
         {
             graphHeight *= 0.4f;
             vidPlayer = gameObject.transform.Find("Video").GetComponent<VideoPlayer>();
-            vidPlayer.url = climb.video;
+            vidPlayer.url = climb.VideoPath;
         }
         else gameObject.transform.Find("Video").gameObject.SetActive(false);
 

@@ -95,7 +95,6 @@ public class AccelerometerRecorder : MonoBehaviour
     private void SaveAndViewClimb()
     {
         ClimbData climb = new ClimbData(data);
-        timerText.text = climb.Details;
         FileHandler.SaveClimb(climb, true);
 
         PersistentInfo.previousScene = SceneManager.GetActiveScene().name;

@@ -28,7 +28,7 @@ public class ClimbEditor : MonoBehaviour
 
 
         GameObject offsetEditorBox = gameObject.transform.Find("Video Offset Editor").gameObject;
-        if (File.Exists(climb.video))
+        if (File.Exists(climb.VideoPath))
         {
 
             offsetField = offsetEditorBox.transform.Find("Number").GetComponent<InputField>();
