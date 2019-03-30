@@ -66,12 +66,15 @@ public class FileHandler
 
 
     // Calculates the video time by parsing the filename
-    private static DateTime CalcVidTime(string path)
+    public static DateTime CalcVidTime(string path)
     {
         DateTime result;
-        string filename = Path.GetFileNameWithoutExtension(path);
-        int startIndex = filename.IndexOf('2');
-        string dateString = filename.Substring(startIndex, filename.Length - startIndex);
+        string dateString = Path.GetFileNameWithoutExtension(path);
+
+        if (dateString.Contains("20")) {
+            int startIndex = dateString.IndexOf('2');
+            dateString = dateString.Substring(startIndex, dateString.Length - startIndex);
+        }
 
         Debug.Log("attempt to parse: " + dateString);
 
@@ -99,7 +102,7 @@ public class FileHandler
         string vidFilepath = CopyVideo(oldPath, vidTime);
 
         ClimbData climb = PersistentInfo.CurrentClimb;
-        climb.video = vidFilepath;
+        climb.VideoPath = vidFilepath;
 
         SaveClimb(climb, false);
     }
@@ -124,7 +127,7 @@ public class FileHandler
     {
         try
         {
-            File.Delete(climb.video);
+            File.Delete(climb.VideoPath);
         }
         catch (Exception e)
         {
