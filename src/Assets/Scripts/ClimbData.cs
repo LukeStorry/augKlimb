@@ -14,8 +14,8 @@ public class ClimbData
     [SerializeField]
     private float smoothness;
 
-
-    public string video = "";
+    [SerializeField]
+    private string videoPath = "";
     [SerializeField]
     private float videoOffset = 0; //seconds
 
@@ -71,6 +71,27 @@ public class ClimbData
             output += "Smoothness: " + smoothness.ToString("#0.0") + "\n";
 
             return output;
+        }
+    }
+
+
+    public string VideoPath
+    {
+        get { return videoPath; }
+        set
+        {
+            videoPath = value;
+            DateTime vidTime = FileHandler.CalcVidTime(videoPath);
+            float offset = (float)Date.Subtract(vidTime).TotalMilliseconds / 1000;
+
+            Debug.Log("offset:" + offset);
+
+            if (25 > offset && offset > -TimeTaken)
+                videoOffset = offset;
+            else
+                videoOffset = 0;
+
+           FileHandler.SaveClimb(this, false);
         }
     }
 

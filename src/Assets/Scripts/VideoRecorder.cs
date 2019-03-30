@@ -10,6 +10,7 @@ public class VideoRecorder : MonoBehaviour
 {
     private Text output;
     private GameObject shareButton;
+    private DateTime vidTime;
     void Start()
     {
         output = gameObject.transform.Find("Text").GetComponent<Text>();
@@ -26,16 +27,19 @@ public class VideoRecorder : MonoBehaviour
             SceneManager.LoadScene(0);
     }
 
+
     // Records a video, using https://github.com/yasirkula/UnityNativeCamera
     private void RecordVideo()
     {
-        Debug.Log(FileHandler.vidsFolder);
-        DateTime vidTime = DateTime.Now; // TODO edit to take time from video recorder, as this doesnt start the recrod!
-
+        gameObject.transform.Find("Explanation").gameObject.SetActive(false);
         if (NativeCamera.IsCameraBusy())
+        {
             output.text = ("Camera Busy");
+            return;
+        }
+        vidTime = DateTime.Now + new TimeSpan(0, 0, 4); // TODO can we do better than just "it'll start in 4 seconds"?
 
-        NativeCamera.Permission permission = NativeCamera.RecordVideo(HandleVideo); //, NativeCamera.Quality.Low
+        NativeCamera.Permission permission = NativeCamera.RecordVideo(HandleVideo, NativeCamera.Quality.Low);
 
         Debug.Log("Permission result: " + permission);
     }
@@ -49,15 +53,19 @@ public class VideoRecorder : MonoBehaviour
             return;
         }
 
-        string filename = DateTime.Now.ToString("yyyyMMdd_HHmmss") + Path.GetExtension(tempPath);
+        string filename = vidTime.ToString("yyyyMMdd_HHmmss") + Path.GetExtension(tempPath);
+        output.text = "Video Recorded: " + filename;
 
         NativeGallery.SaveVideoToGallery(tempPath, "augKlimb", filename);
-        output.text = "Video Recorded: " + filename;
+
+        string newPath = Path.Combine(Path.GetDirectoryName(tempPath), filename);
+        File.Move(tempPath, newPath);
+        Debug.Log(newPath);
 
         shareButton.SetActive(true);
         shareButton.GetComponent<Button>().onClick.AddListener(delegate
         {
-            new NativeShare().AddFile(tempPath).Share();
+            new NativeShare().AddFile(newPath).Share();
         });
     }
 
