@@ -12,12 +12,25 @@ namespace GracesGames.SimpleFileBrowser.Scripts
     public class Importer : MonoBehaviour
     {
         public Button importButton;
+        public bool text;
+        public bool video;
         public GameObject fileBrowserPrefab, confirmationBoxPrefab;
-        public string[] filetypes = new string[] { "txt", "mp4", "mov" };
 
         void Start()
         {
-            importButton.onClick.AddListener(LaunchFileBrowser);
+            if (!(text ^ video)) throw new Exception("Either text OR video importer must be selected");
+
+            if (text)
+                importButton.onClick.AddListener(LaunchFileBrowser);
+
+            if (video)
+                importButton.onClick.AddListener(LaunchGalleryBrowser);
+        }
+
+        // launches a platform-specific Gallery browser and returns the path of the selected file
+        private void LaunchGalleryBrowser()
+        {
+            NativeGallery.GetVideoFromGallery(TryImportFile, "Pick a Video", "video/*");
         }
 
         // launches a platform-specific file browser and returns the path of the selected file
@@ -26,19 +39,19 @@ namespace GracesGames.SimpleFileBrowser.Scripts
             GameObject fileBrowserObject = Instantiate(fileBrowserPrefab, transform);
             FileBrowser fileBrowserScript = fileBrowserObject.GetComponent<FileBrowser>();
             fileBrowserScript.SetupFileBrowser(ViewMode.Portrait);
-            fileBrowserScript.OpenFilePanel(filetypes);
+            fileBrowserScript.OpenFilePanel(new string[] { "txt" });
             fileBrowserScript.OnFileSelect += TryImportFile;  // subscribes to event (calls using path) 
         }
 
-        // selects and parses an external climb file, then saves to data folder (cached). Displays exceptions in the textbox of attached object.
+        // selects and parses an external file, then saves to data folder (cached). Displays exceptions in the textbox of attached object.
         private void TryImportFile(string path)
         {
             try
             {
-                if (Path.GetExtension(path) == ".txt")
-                    FileHandler.LoadClimb(path, copy: true);
-                else
+                if (video)
                     FileHandler.ImportVideo(path);
+                else if (text)
+                    FileHandler.LoadClimb(path, copy: true);
 
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             }

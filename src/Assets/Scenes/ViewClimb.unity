@@ -2421,14 +2421,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   importButton: {fileID: 1342142130}
-  fileBrowserPrefab: {fileID: 1760643962491650, guid: 4599b5ba3543545db92bb18160cea721,
-    type: 2}
+  text: 0
+  video: 1
+  fileBrowserPrefab: {fileID: 0}
   confirmationBoxPrefab: {fileID: 1066639312455830, guid: 548a94f5d2e6e0b40806e03d73e3426a,
     type: 2}
-  filetypes:
-  - avi
-  - mp4
-  - mov
 --- !u!1 &2015440303
 GameObject:
   m_ObjectHideFlags: 0

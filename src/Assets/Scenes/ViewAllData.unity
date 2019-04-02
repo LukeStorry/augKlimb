@@ -285,7 +285,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.00005531311}
+  m_AnchoredPosition: {x: 0, y: 0.000038146973}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &790364920
@@ -707,7 +707,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 925334975}
   m_HandleRect: {fileID: 925334974}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 1
   m_OnValueChanged:
@@ -960,12 +960,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   importButton: {fileID: 1993735080}
+  text: 1
+  video: 0
   fileBrowserPrefab: {fileID: 1760643962491650, guid: 4599b5ba3543545db92bb18160cea721,
     type: 2}
   confirmationBoxPrefab: {fileID: 1066639312455830, guid: 548a94f5d2e6e0b40806e03d73e3426a,
     type: 2}
-  filetypes:
-  - txt
 --- !u!1 &1993735078
 GameObject:
   m_ObjectHideFlags: 0

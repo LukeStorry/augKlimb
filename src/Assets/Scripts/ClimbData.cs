@@ -153,7 +153,6 @@ public class ClimbData
         {
             totalSquaredDiff += Mathf.Pow(n.acc - avgAcceleration, 2);
         }
-        Debug.Log("Smoothness Calculated: " + totalSquaredDiff.ToString("0.000"));
         return totalSquaredDiff;
     }
 
