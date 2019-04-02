@@ -51,8 +51,11 @@ public class ClimbData
     {
         get
         {
-            if (_title == "") return "";
-            else return Date.ToString("dddd dd/MM/yyyy HH:mm.ss");
+            string output = "Smoothness: " + smoothness.ToString("#0.0"); 
+            if (_title == "")
+                return output;
+            else
+                return Date.ToString("dddd dd/MM/yyyy HH:mm.ss") + "                " + output;
         }
     }
 
@@ -68,7 +71,7 @@ public class ClimbData
             output += "Time Taken: " + TimeTaken.ToString("#0.0") + "\n";
             output += "Average Acceleration: " + avgAcceleration.ToString("#0.0") + "\n";
             output += "Max Acceleration: " + maxAcceleration.ToString("#0.0") + "\n";
-            output += "Smoothness: " + smoothness.ToString("#0.0") + "\n";
+            output += "Overall Smoothness: " + smoothness.ToString("#0.0") + "\n";
 
             return output;
         }
@@ -115,16 +118,16 @@ public class ClimbData
     // calculate and cache the analytics for this climb
     private void CalculateAnalytics()
     {
-        avgAcceleration = CalcAverageAcceleration();
-        maxAcceleration = CalcMaxAcceleration();
-        smoothness = CalcSmoothness();
+        avgAcceleration = CalcAverageAcceleration(accelerometer);
+        maxAcceleration = CalcMaxAcceleration(accelerometer);
+        smoothness = CalcSmoothness(accelerometer);
     }
 
-    private float CalcAverageAcceleration()
+    private static float CalcAverageAcceleration(List<DataPoint> data)
     {
         float sum = 0;
         int count = 0;
-        foreach (DataPoint n in accelerometer)
+        foreach (DataPoint n in data)
         {
             sum += n.acc;
             count += 1;
@@ -132,20 +135,21 @@ public class ClimbData
         return sum / count;
     }
 
-    private float CalcMaxAcceleration()
+    private static float CalcMaxAcceleration(List<DataPoint> data)
     {
         float max = float.MinValue;
-        foreach (DataPoint dataPoint in accelerometer)
+        foreach (DataPoint dataPoint in data)
         {
             max = (dataPoint.acc > max) ? dataPoint.acc : max;
         }
         return max;
     }
 
-    private float CalcSmoothness()
+    public static float CalcSmoothness(List<DataPoint> data)
     {
         float totalSquaredDiff = 0;
-        foreach (DataPoint n in accelerometer)
+        float avgAcceleration = CalcMaxAcceleration(data);
+        foreach (DataPoint n in data)
         {
             totalSquaredDiff += Mathf.Pow(n.acc - avgAcceleration, 2);
         }

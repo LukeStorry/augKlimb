@@ -14,14 +14,12 @@ public static class GraphDrawer
         lineObj = Resources.Load("Line") as GameObject;
 
         // Find dataset max & min
-        long maxTime = long.MinValue;
-        long minTime = long.MaxValue;
-        float maxAcc = float.MinValue;
+        long minTime = data[0].time;
+        long maxTime = data[data.Count - 1].time;
         float minAcc = 0;
+        float maxAcc = float.MinValue;
         foreach (DataPoint dataPoint in data)
         {
-            maxTime = (dataPoint.time > maxTime) ? dataPoint.time : maxTime;
-            minTime = (dataPoint.time < minTime) ? dataPoint.time : minTime;
             maxAcc = (dataPoint.acc > maxAcc) ? dataPoint.acc : maxAcc;
             minAcc = (dataPoint.acc < minAcc) ? dataPoint.acc : minAcc;
         }
@@ -31,14 +29,14 @@ public static class GraphDrawer
 
         // Calculate mapping values (adding slight offsets to prevent zero edge-case)
         float xMultiplier = graphWidth / (maxTime - minTime + 0.0001f);
-        float yMultiplier = graphHeight / (maxAcc - minAcc + 0.0001f);
+        float yMultiplier = (graphHeight - 30) / (maxAcc - minAcc + 0.0001f);
 
         // Loop through datapoints adding a line to the previous point, if exists
         Vector2 previous = Vector2.zero;
         foreach (DataPoint dataPoint in data)
         {
             float x = (dataPoint.time - minTime) * xMultiplier;
-            float y = (dataPoint.acc - minAcc) * yMultiplier;
+            float y = (dataPoint.acc - minAcc) * yMultiplier + 10;
             Vector2 coord = new Vector2(x, y);
 
             if (previous != Vector2.zero)
@@ -61,22 +59,38 @@ public static class GraphDrawer
 
             previous = coord;
         }
-        
+
         if (includeSeconds)
         {
+            //long startTick = data[0].time;
+            //List<float> smoothnesses = new List<float>();
+            //foreach (DataPoint dataPoint in data)
+            //{
+
+            //}
+
             GameObject textBox = Resources.Load("TextBox") as GameObject;
+            int indexStartOfSecond = 0;
             float duration = (data[data.Count - 1].time - data[0].time) / 10000000.0f;
             for (int second = 1; second < duration; second++)
             {
-                GameObject label = Object.Instantiate(textBox, graphContainer.transform);
+                GameObject secondsLabel = Object.Instantiate(textBox, graphContainer.transform);
+                secondsLabel.GetComponent<RectTransform>().localPosition = new Vector2((second * 10000000.0f) * xMultiplier, 10);
+                secondsLabel.GetComponent<Text>().text = second.ToString();
 
-                float location = (second * 10000000.0f) * xMultiplier;
+                int accsPerSecond = data.FindIndex(indexStartOfSecond, x => x.time > data[indexStartOfSecond].time + 10000000) - indexStartOfSecond;
+                if (accsPerSecond < 0) continue;
 
-                label.GetComponent<RectTransform>().localPosition = new Vector2(location, 5);
-                label.GetComponent<Text>().text = second.ToString();
+                float smoothness = ClimbData.CalcSmoothness(data.GetRange(indexStartOfSecond, accsPerSecond));
+                indexStartOfSecond += accsPerSecond;
+
+                GameObject smoothnessLabel = Object.Instantiate(textBox, graphContainer.transform);
+                smoothnessLabel.GetComponent<RectTransform>().localPosition = new Vector2((second - 0.5f) * 10000000.0f * xMultiplier, graphHeight);
+                smoothnessLabel.GetComponent<Text>().text = smoothness.ToString("0.0");
+                smoothnessLabel.GetComponent<Text>().color = Color.white;
+                smoothnessLabel.GetComponent<Text>().fontSize = 14;
 
             }
-
         }
     }
 
