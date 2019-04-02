@@ -2,34 +2,51 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public static class GraphDrawer
+public class GraphDrawer
 {
-    private static GameObject dotObj;
-    private static GameObject lineObj;
+    private GameObject graphContainer;
+    private List<DataPoint> data;
+    private long minTime, maxTime;
+    private float minAcc, maxAcc;
+    private float graphWidth, graphHeight;
+    private float xMultiplier, yMultiplier;
 
-    // Draws a graph of the given data, within the bounds of a given graphContainer's RectTransform
-    public static void Draw(GameObject graphContainer, List<DataPoint> data, bool includeDots = false, bool includeSeconds = false, float lineWidth = 5)
+    public GraphDrawer(GameObject graphContainer, List<DataPoint> data)
     {
-        dotObj = Resources.Load("Dot") as GameObject;
-        lineObj = Resources.Load("Line") as GameObject;
+        this.graphContainer = graphContainer;
+        this.data = data;
 
         // Find dataset max & min
-        long minTime = data[0].time;
-        long maxTime = data[data.Count - 1].time;
-        float minAcc = 0;
-        float maxAcc = float.MinValue;
+        minTime = data[0].time;
+        maxTime = data[data.Count - 1].time;
+        minAcc = 0;
+        maxAcc = float.MinValue;
         foreach (DataPoint dataPoint in data)
         {
             maxAcc = (dataPoint.acc > maxAcc) ? dataPoint.acc : maxAcc;
             minAcc = (dataPoint.acc < minAcc) ? dataPoint.acc : minAcc;
         }
+
         // Find size of graphContainer (with 10pt padding)
-        float graphWidth = -10 + graphContainer.GetComponent<RectTransform>().rect.width;
-        float graphHeight = graphContainer.GetComponent<RectTransform>().rect.height;
+        graphWidth = -10 + graphContainer.GetComponent<RectTransform>().rect.width;
+        graphHeight = graphContainer.GetComponent<RectTransform>().rect.height;
 
         // Calculate mapping values (adding slight offsets to prevent zero edge-case)
-        float xMultiplier = graphWidth / (maxTime - minTime + 0.0001f);
-        float yMultiplier = (graphHeight - 40) / (maxAcc - minAcc + 0.0001f);
+        xMultiplier = graphWidth / (maxTime - minTime + 0.0001f);
+        yMultiplier = (graphHeight - 40) / (maxAcc - minAcc + 0.0001f);
+    }
+
+    // Draws a graph of the given data, within the bounds of a given graphContainer's RectTransform
+    public void Draw(bool includeDots = false, bool includeSeconds = false)
+    {
+        if (includeSeconds) DrawSecondsBoxes();
+        DrawLines(includeDots);
+    }
+
+    private void DrawLines(bool includeDots, float lineWidth = 5)
+    {
+        GameObject dotObj = Resources.Load("Dot") as GameObject;
+        GameObject lineObj = Resources.Load("Line") as GameObject;
 
         // Loop through datapoints adding a line to the previous point, if exists
         Vector2 previous = Vector2.zero;
@@ -60,37 +77,38 @@ public static class GraphDrawer
             previous = coord;
         }
 
-        if (includeSeconds)
+    }
+
+    private void DrawSecondsBoxes()
+    {
+        GameObject secondsBox = Resources.Load("Seconds Box") as GameObject;
+        int indexStartOfSecond = 0;
+        float duration = (data[data.Count - 1].time - data[0].time) / 10000000.0f;
+
+        for (int second = 0; second < duration; second++)
         {
+            // calculate the smoothness for that second
+            int indexEndOfSecond = data.FindIndex(indexStartOfSecond, (x => x.time > (minTime + (second + 1) * 10000000)));
+            if (indexEndOfSecond < 0) continue;
+            float smoothness = ClimbData.CalcSmoothness(data.GetRange(indexStartOfSecond, indexEndOfSecond - indexStartOfSecond));
+            indexStartOfSecond = indexEndOfSecond;
 
-            GameObject secondsBox = Resources.Load("Seconds Box") as GameObject;
-            int indexStartOfSecond = 0;
-            float duration = (data[data.Count - 1].time - data[0].time) / 10000000.0f;
+            // create and set the seconds box
+            GameObject box = Object.Instantiate(secondsBox, graphContainer.transform);
+            box.GetComponent<RectTransform>().localPosition = new Vector2((second * 10000000.0f) * xMultiplier, 0);
+            box.GetComponent<RectTransform>().sizeDelta = new Vector2(100, graphHeight);
 
-            for (int second = 0; second < duration; second++)
-            {
-                // calculate the smoothness for that second
-                int indexEndOfSecond = data.FindIndex(indexStartOfSecond, (x => x.time > (minTime + (second+1) * 10000000)));
-                Debug.Log("" + indexStartOfSecond + "  "  + indexEndOfSecond);
-                if (indexEndOfSecond < 0) continue;
-                float smoothness = ClimbData.CalcSmoothness(data.GetRange(indexStartOfSecond, indexEndOfSecond - indexStartOfSecond));
-                indexStartOfSecond = indexEndOfSecond;
-
-                // create and set the seconds box
-                GameObject box = Object.Instantiate(secondsBox, graphContainer.transform);
-                box.GetComponent<RectTransform>().localPosition = new Vector2((second * 10000000.0f) * xMultiplier, 0);
-                box.GetComponent<RectTransform>().sizeDelta = new Vector2(100, graphHeight);
-         
-                box.transform.Find("Second Label").GetComponent<Text>().text = second.ToString();
-                box.transform.Find("Smoothness Label").GetComponent<Text>().text = smoothness.ToString("0.0");
-                box.GetComponent<Image>().color = new Color(0, 0, 0, smoothness / 300);
-            }
+            box.transform.Find("Second Label").GetComponent<Text>().text = second.ToString();
+            box.transform.Find("Smoothness Label").GetComponent<Text>().text = smoothness.ToString("0.0");
+            box.GetComponent<Image>().color = new Color(0, 0, 0, Mathf.Clamp(smoothness, 0, 200) / 300);
         }
     }
 
     // Draws line at location signified by parameter given as 0-1 
-    public static GameObject VerticalLine(GameObject graphContainer, float location, Color color)
+    public static GameObject DrawVerticalLine(GameObject graphContainer, float location, Color color)
     {
+        GameObject lineObj = Resources.Load("Line") as GameObject;
+
         GameObject line = Object.Instantiate(lineObj, graphContainer.transform);
         line.GetComponent<RectTransform>().localPosition = new Vector2(location * graphContainer.GetComponent<RectTransform>().rect.width, -1000);
         line.GetComponent<RectTransform>().sizeDelta = new Vector2(2000, 10);

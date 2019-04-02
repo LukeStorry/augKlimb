@@ -32,7 +32,7 @@ public class DataScroller : MonoBehaviour
         item.transform.Find("Title").GetComponent<Text>().text = climb.Title;
         item.transform.Find("Details").GetComponent<Text>().text = climb.Info;
         item.GetComponent<Button>().onClick.AddListener(delegate { SelectClimb(climb); });
-        GraphDrawer.Draw(item.transform.Find("GraphContainer").gameObject, climb.accelerometer);
+        new GraphDrawer(item.transform.Find("GraphContainer").gameObject, climb.accelerometer).Draw();
     }
 
     void SelectClimb(ClimbData climb)

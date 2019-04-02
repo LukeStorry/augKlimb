@@ -46,7 +46,7 @@ public class ClimbViewer : MonoBehaviour
         scrollContent.GetComponent<RectTransform>().sizeDelta = new Vector2(20 + graphWidth, graphHeight);
         scrollView.GetComponent<RectTransform>().sizeDelta = new Vector2(-10, graphHeight + 20);
 
-        GraphDrawer.Draw(graphContainer, climb.accelerometer, includeDots: true, includeSeconds: true);
+        new GraphDrawer(graphContainer, climb.accelerometer).Draw(includeDots: true, includeSeconds: true);
 
     }
 
