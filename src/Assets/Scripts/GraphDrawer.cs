@@ -25,11 +25,11 @@ public static class GraphDrawer
         }
         // Find size of graphContainer (with 10pt padding)
         float graphWidth = -10 + graphContainer.GetComponent<RectTransform>().rect.width;
-        float graphHeight = -10 + graphContainer.GetComponent<RectTransform>().rect.height;
+        float graphHeight = graphContainer.GetComponent<RectTransform>().rect.height;
 
         // Calculate mapping values (adding slight offsets to prevent zero edge-case)
         float xMultiplier = graphWidth / (maxTime - minTime + 0.0001f);
-        float yMultiplier = (graphHeight - 30) / (maxAcc - minAcc + 0.0001f);
+        float yMultiplier = (graphHeight - 40) / (maxAcc - minAcc + 0.0001f);
 
         // Loop through datapoints adding a line to the previous point, if exists
         Vector2 previous = Vector2.zero;
@@ -62,34 +62,28 @@ public static class GraphDrawer
 
         if (includeSeconds)
         {
-            //long startTick = data[0].time;
-            //List<float> smoothnesses = new List<float>();
-            //foreach (DataPoint dataPoint in data)
-            //{
 
-            //}
-
-            GameObject textBox = Resources.Load("TextBox") as GameObject;
+            GameObject secondsBox = Resources.Load("Seconds Box") as GameObject;
             int indexStartOfSecond = 0;
             float duration = (data[data.Count - 1].time - data[0].time) / 10000000.0f;
-            for (int second = 1; second < duration; second++)
+
+            for (int second = 0; second < duration; second++)
             {
-                GameObject secondsLabel = Object.Instantiate(textBox, graphContainer.transform);
-                secondsLabel.GetComponent<RectTransform>().localPosition = new Vector2((second * 10000000.0f) * xMultiplier, 10);
-                secondsLabel.GetComponent<Text>().text = second.ToString();
+                // calculate the smoothness for that second
+                int indexEndOfSecond = data.FindIndex(indexStartOfSecond, (x => x.time > (minTime + (second+1) * 10000000)));
+                Debug.Log("" + indexStartOfSecond + "  "  + indexEndOfSecond);
+                if (indexEndOfSecond < 0) continue;
+                float smoothness = ClimbData.CalcSmoothness(data.GetRange(indexStartOfSecond, indexEndOfSecond - indexStartOfSecond));
+                indexStartOfSecond = indexEndOfSecond;
 
-                int accsPerSecond = data.FindIndex(indexStartOfSecond, x => x.time > data[indexStartOfSecond].time + 10000000) - indexStartOfSecond;
-                if (accsPerSecond < 0) continue;
-
-                float smoothness = ClimbData.CalcSmoothness(data.GetRange(indexStartOfSecond, accsPerSecond));
-                indexStartOfSecond += accsPerSecond;
-
-                GameObject smoothnessLabel = Object.Instantiate(textBox, graphContainer.transform);
-                smoothnessLabel.GetComponent<RectTransform>().localPosition = new Vector2((second - 0.5f) * 10000000.0f * xMultiplier, graphHeight);
-                smoothnessLabel.GetComponent<Text>().text = smoothness.ToString("0.0");
-                smoothnessLabel.GetComponent<Text>().color = Color.white;
-                smoothnessLabel.GetComponent<Text>().fontSize = 14;
-
+                // create and set the seconds box
+                GameObject box = Object.Instantiate(secondsBox, graphContainer.transform);
+                box.GetComponent<RectTransform>().localPosition = new Vector2((second * 10000000.0f) * xMultiplier, 0);
+                box.GetComponent<RectTransform>().sizeDelta = new Vector2(100, graphHeight);
+         
+                box.transform.Find("Second Label").GetComponent<Text>().text = second.ToString();
+                box.transform.Find("Smoothness Label").GetComponent<Text>().text = smoothness.ToString("0.0");
+                box.GetComponent<Image>().color = new Color(0, 0, 0, smoothness / 300);
             }
         }
     }
