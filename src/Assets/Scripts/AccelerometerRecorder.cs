@@ -13,6 +13,7 @@ public class AccelerometerRecorder : MonoBehaviour
     private bool running = false;
     private Color buttonReadyColour, buttonNotReadyColour;
     private int countdown;
+    private GameObject viewClimbButton;
 
     void Start()
     {
@@ -27,6 +28,10 @@ public class AccelerometerRecorder : MonoBehaviour
 
         buttonReadyColour = startButton.GetComponent<Image>().color;
         buttonNotReadyColour = stopButton.GetComponent<Image>().color;
+
+        viewClimbButton = gameObject.transform.Find("View Climb Button").gameObject;
+        viewClimbButton.GetComponent<Button>().onClick.AddListener(ViewClimb);
+
     }
 
     void Update()
@@ -50,7 +55,7 @@ public class AccelerometerRecorder : MonoBehaviour
         }
         else
         {
-            timerText.text = Timer().ToString("#0.0");
+            timerText.text = "Recording\n\n" + Timer().ToString("#0.0");
             float acc = new Vector3(Input.acceleration.x, Input.acceleration.y, Input.acceleration.z).magnitude - 1; // -1 offset for gravity
             data.Add(new DataPoint(DateTime.Now.Ticks, acc));
         }
@@ -74,6 +79,7 @@ public class AccelerometerRecorder : MonoBehaviour
         stopButton.GetComponent<Image>().color = buttonReadyColour;
     }
 
+
     public void StopButtonPressed()
     {
         Screen.sleepTimeout = SleepTimeout.SystemSetting;
@@ -82,27 +88,28 @@ public class AccelerometerRecorder : MonoBehaviour
         Debug.Log("Stopped");
 
         if (data.Count > 100)
-            SaveAndViewClimb();
+        {
+            ClimbData climb = new ClimbData(data);
+            FileHandler.SaveClimb(climb, true);
+            PersistentInfo.CurrentClimb = climb;
+            timerText.text = climb.Details;
+            viewClimbButton.SetActive(true);
+        }
         else
+        {
             timerText.text = "Not enough data recorded, minimum 5 seconds.";
+        }
 
         startButton.GetComponent<Image>().color = buttonReadyColour;
         stopButton.GetComponent<Image>().color = buttonNotReadyColour;
-
     }
 
 
-    private void SaveAndViewClimb()
+    private void ViewClimb()
     {
-        ClimbData climb = new ClimbData(data);
-        FileHandler.SaveClimb(climb, true);
-
         PersistentInfo.previousScene = SceneManager.GetActiveScene().name;
-        PersistentInfo.CurrentClimb = climb;
-
         SceneManager.LoadScene("ViewClimb");
     }
-
 
     private float Timer()
     {
