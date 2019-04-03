@@ -33,7 +33,7 @@ public class Importer : MonoBehaviour
     {
         FileBrowser.SetFilters(false, new FileBrowser.Filter("Climb Files", ".txt"));
         FileBrowser.SetDefaultFilter(".txt");
-        FileBrowser.ShowLoadDialog(TryImportFile, null, false, "Load Climb File", "Select");
+        FileBrowser.ShowLoadDialog(TryImportFile, null, false, "Load Climb File", "Select a Climb File");
 
     }
 
