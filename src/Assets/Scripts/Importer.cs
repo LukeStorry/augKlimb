@@ -31,10 +31,10 @@ public class Importer : MonoBehaviour
     // launches a platform-specific file browser and returns the path of the selected file
     private void LaunchFileBrowser()
     {
+        FileBrowser.SingleClickMode = true;
         FileBrowser.SetFilters(false, new FileBrowser.Filter("Climb Files", ".txt"));
         FileBrowser.SetDefaultFilter(".txt");
         FileBrowser.ShowLoadDialog(TryImportFile, null, false, "Load Climb File", "Select a Climb File");
-
     }
 
     // selects and parses an external file, then saves to data folder (cached). Displays exceptions in the textbox of attached object.
