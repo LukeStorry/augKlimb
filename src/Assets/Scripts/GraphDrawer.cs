@@ -98,7 +98,7 @@ public class GraphDrawer
             box.GetComponent<RectTransform>().localPosition = new Vector2((second * 10000000.0f) * xMultiplier, 0);
             box.GetComponent<RectTransform>().sizeDelta = new Vector2(100, graphHeight);
 
-            box.transform.Find("Second Label").GetComponent<Text>().text = second.ToString();
+            box.transform.Find("Second Label").GetComponent<Text>().text = second.ToString()+"s";
             box.transform.Find("Smoothness Label").GetComponent<Text>().text = smoothness.ToString("0.0");
             box.GetComponent<Image>().color = new Color(0, 0, 0, Mathf.Clamp(smoothness, 0, 200) / 300);
         }
