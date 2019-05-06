@@ -149,11 +149,13 @@ public class ClimbData
     {
         float totalSquaredDiff = 0;
         float avgAcceleration = CalcMaxAcceleration(data);
+        int count = 0;
         foreach (DataPoint n in data)
         {
             totalSquaredDiff += Mathf.Pow(n.acc - avgAcceleration, 2);
+            count += 1;
         }
-        return totalSquaredDiff;
+        return totalSquaredDiff / count * 100;
     }
 
 
