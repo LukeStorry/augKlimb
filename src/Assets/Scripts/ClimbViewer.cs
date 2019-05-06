@@ -63,7 +63,7 @@ public class ClimbViewer : MonoBehaviour
             {
                 long selectedFrame = vidFramesOffset + (long)(vidPlayer.frameRate * climb.TimeTaken * scrollBar.horizontalNormalizedPosition);
                 selectedFrame = (long)Mathf.Clamp(selectedFrame, 1, vidPlayer.frameCount);
-                if (Mathf.Abs(vidPlayer.frame - selectedFrame) > 1)
+                if (Mathf.Abs(vidPlayer.frame - selectedFrame) > 2)
                     vidPlayer.frame = selectedFrame;
             }
             else
